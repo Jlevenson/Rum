@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Queen's Share Distillation - April 9, 2025</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .chart-container {
+      width: 800px;
+      height: 500px;
+      margin: 20px auto;
+      position: relative;
+      border: 1px solid #ccc;
+    }
+    #chartCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    .legend {
+      margin: 20px auto;
+      width: 800px;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .color-box {
+      width: 15px;
+      height: 15px;
+      display: inline-block;
+    }
+    .section-legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin: 20px auto;
+      max-width: 800px;
+    }
+    .section-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Queen's Share Distillation Analysis</h1>
+  <p style="text-align: center;">April 9, 2025 · Starting Charge: 225 Gallons at 50% ABV · Final Collection: 48.71 gallons</p>
+  
+  <div class="chart-container">
+    <canvas id="chartCanvas" width="800" height="500"></canvas>
+  </div>
+  
+  <div class="legend">
+    <div class="legend-item">
+      <div class="color-box" style="background-color: blue;"></div>
+      <span>ABV (%) - Left Axis</span>
+    </div>
+    <div class="legend-item">
+      <div class="color-box" style="background-color: green;"></div>
+      <span>Volume (gallons) - Right Axis</span>
+    </div>
+    <div class="legend-item">
+      <div class="color-box" style="background-color: red;"></div>
+      <span>Target Volume (35 gallons)</span>
+    </div>
+  </div>
+  
+  <div class="section-legend">
+    <div class="section-item" style="background-color: rgba(200,200,200,0.3);">
+      <span>Initial</span>
+    </div>
+    <div class="section-item" style="background-color: rgba(221,160,221,0.3);">
+      <span>Dry, beachy</span>
+    </div>
+    <div class="section-item" style="background-color: rgba(135,206,250,0.3);">
+      <span>Developing sweetness</span>
+    </div>
+    <div class="section-item" style="background-color: rgba(255,165,0,0.3);">
+      <span>Stone fruit notes</span>
+    </div>
+    <div class="section-item" style="background-color: rgba(144,238,144,0.3);">
+      <span>Sweet</span>
+    </div>
+    <div class="section-item" style="background-color: rgba(255,99,71,0.3);">
+      <span>Dry finish</span>
+    </div>
+  </div>
+  
+  <div class="summary" style="margin: 20px auto; max-width: 800px;">
+    <h2>Run Summary</h2>
+    <ul>
+      <li><strong>Run Duration:</strong> 10 hours (9:12 - 19:12)</li>
+      <li><strong>Final Volume:</strong> 48.71 gallons</li>
+      <li><strong>Hearts ABV Range:</strong> 80.4% - 83.02%</li>
+      <li><strong>ABV Decline Rate:</strong> ~0.24% per hour during hearts collection</li>
+      <li><strong>Target Volume:</strong> 35 gallons (reached at 16:27)</li>
+      <li><strong>Sensory Notes:</strong>
+        <ul>
+          <li><strong>10:27:</strong> "Dry, beachy, warm coconut water after taste"</li>
+          <li><strong>11:12:</strong> "Developing hints of sweet on palate"</li>
+          <li><strong>12:27:</strong> "Sweet and hint of stone fruits (peach/cherry)"</li>
+          <li><strong>14:42:</strong> "Sweet on palate"</li>
+          <li><strong>18:42:</strong> "A bit of sweetness, but a dry finish"</li>
+          <li><strong>18:57:</strong> "Dry and bitter with a tad of sweetness"</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const canvas = document.getElementById('chartCanvas');
+      const ctx = canvas.getContext('2d');
+      
+      // Canvas dimensions
+      const width = canvas.width;
+      const height = canvas.height;
+      const padding = {top: 30, right: 70, bottom: 50, left: 70};
+      const chartWidth = width - padding.left - padding.right;
+      const chartHeight = height - padding.top - padding.bottom;
+      
+      // ABV data
+      const abvData = [
+        {time: "9:12", timeValue: 0, abv: 90.38, section: "Initial"},
+        {time: "9:27", timeValue: 15, abv: 85.9, section: "Initial"},
+        {time: "9:42", timeValue: 30, abv: 80.73, section: "Initial"},
+        {time: "9:57", timeValue: 45, abv: 84.28, section: "Initial"},
+        {time: "10:12", timeValue: 60, abv: 82.43, section: "Initial"},
+        {time: "10:27", timeValue: 75, abv: 82.0, section: "Dry, beachy", note: "Dry, beachy notes"},
+        {time: "10:42", timeValue: 90, abv: 83.02, section: "Dry, beachy"},
+        {time: "10:57", timeValue: 105, abv: 82.92, section: "Dry, beachy"},
+        {time: "11:12", timeValue: 120, abv: 82.82, section: "Developing sweetness", note: "Developing sweetness"},
+        {time: "11:27", timeValue: 135, abv: 82.72, section: "Developing sweetness"},
+        {time: "11:42", timeValue: 150, abv: 82.7, section: "Developing sweetness"},
+        {time: "11:57", timeValue: 165, abv: 82.55, section: "Developing sweetness"},
+        {time: "12:12", timeValue: 180, abv: 82.63, section: "Developing sweetness"},
+        {time: "12:27", timeValue: 195, abv: 82.5, section: "Stone fruit", note: "Stone fruit notes"},
+        {time: "12:42", timeValue: 210, abv: 82.32, section: "Stone fruit"},
+        {time: "12:57", timeValue: 225, abv: 82.45, section: "Stone fruit"},
+        {time: "13:12", timeValue: 240, abv: 82.43, section: "Stone fruit"},
+        {time: "13:27", timeValue: 255, abv: 82.24, section: "Stone fruit"},
+        {time: "13:42", timeValue: 270, abv: 82.2, section: "Stone fruit"},
+        {time: "13:57", timeValue: 285, abv: 82.28, section: "Stone fruit"},
+        {time: "14:12", timeValue: 300, abv: 82.17, section: "Stone fruit"},
+        {time: "14:27", timeValue: 315, abv: 82.06, section: "Stone fruit"},
+        {time: "14:42", timeValue: 330, abv: 81.94, section: "Sweet", note: "Sweet on palate"},
+        {time: "14:57", timeValue: 345, abv: 81.92, section: "Sweet"},
+        {time: "15:12", timeValue: 360, abv: 81.93, section: "Sweet"},
+        {time: "15:27", timeValue: 375, abv: 81.72, section: "Sweet"},
+        {time: "15:42", timeValue: 390, abv: 81.88, section: "Sweet"},
+        {time: "15:57", timeValue: 405, abv: 81.65, section: "Sweet"},
+        {time: "16:12", timeValue: 420, abv: 81.49, section: "Sweet"},
+        {time: "16:27", timeValue: 435, abv: 81.24, section: "Sweet"},
+        {time: "16:42", timeValue: 450, abv: 81.27, section: "Sweet"},
+        {time: "16:57", timeValue: 465, abv: 81.23, section: "Sweet"},
+        {time: "17:12", timeValue: 480, abv: 81.13, section: "Sweet"},
+        {time: "17:27", timeValue: 495, abv: 81.11, section: "Sweet"},
+        {time: "17:42", timeValue: 510, abv: 81.0, section: "Sweet"},
+        {time: "17:57", timeValue: 525, abv: 80.92, section: "Sweet"},
+        {time: "18:12", timeValue: 540, abv: 80.83, section: "Sweet"},
+        {time: "18:27", timeValue: 555, abv: 80.69, section: "Sweet"},
+        {time: "18:42", timeValue: 570, abv: 80.6, section: "Dry finish", note: "Dry finish"},
+        {time: "18:57", timeValue: 585, abv: 80.47, section: "Dry finish"},
+        {time: "19:12", timeValue: 600, abv: 80.4, section: "Dry finish"}
+      ];
+      
+      // Volume data - starts at 11:12 (timeValue 120)
+      const volumeData = [
+        {time: "11:12", timeValue: 120, volume: 5.00},
+        {time: "11:27", timeValue: 135, volume: 6.63},
+        {time: "11:42", timeValue: 150, volume: 7.32},
+        {time: "11:57", timeValue: 165, volume: 9.65},
+        {time: "12:12", timeValue: 180, volume: 11.28},
+        {time: "12:27", timeValue: 195, volume: 12.67},
+        {time: "12:42", timeValue: 210, volume: 14.30},
+        {time: "12:57", timeValue: 225, volume: 15.46},
+        {time: "13:12", timeValue: 240, volume: 17.09},
+        {time: "13:27", timeValue: 255, volume: 18.25},
+        {time: "13:42", timeValue: 270, volume: 19.88},
+        {time: "13:57", timeValue: 285, volume: 20.34},
+        {time: "14:12", timeValue: 300, volume: 22.90},
+        {time: "14:27", timeValue: 315, volume: 24.06},
+        {time: "14:42", timeValue: 330, volume: 25.46},
+        {time: "14:57", timeValue: 345, volume: 27.09},
+        {time: "15:12", timeValue: 360, volume: 28.71},
+        {time: "15:27", timeValue: 375, volume: 29.64},
+        {time: "15:42", timeValue: 390, volume: 31.04},
+        {time: "15:57", timeValue: 405, volume: 32.43},
+        {time: "16:12", timeValue: 420, volume: 33.83},
+        {time: "16:27", timeValue: 435, volume: 34.99},
+        {time: "16:42", timeValue: 450, volume: 36.39},
+        {time: "16:57", timeValue: 465, volume: 38.01},
+        {time: "17:12", timeValue: 480, volume: 38.94},
+        {time: "17:27", timeValue: 495, volume: 40.57},
+        {time: "17:42", timeValue: 510, volume: 41.97},
+        {time: "17:57", timeValue: 525, volume: 42.90},
+        {time: "18:12", timeValue: 540, volume: 44.29},
+        {time: "18:27", timeValue: 555, volume: 45.69},
+        {time: "18:42", timeValue: 570, volume: 46.85},
+        {time: "18:57", timeValue: 585, volume: 48.71}
+      ];
+      
+      // Calculate scales
+      const maxTimeValue = 600; // 10 hours in minutes
+      const minABV = 80;
+      const maxABV = 95;
+      const maxVolume = 50;
+      
+      // Draw grid and axes
+      function drawGrid() {
+        ctx.strokeStyle = '#ddd';
+        ctx.lineWidth = 0.5;
+        
+        // Vertical grid lines (every hour)
+        for (let i = 0; i <= 10; i++) {
+          const x = padding.left + (i / 10) * chartWidth;
+          ctx.beginPath();
+          ctx.moveTo(x, padding.top);
+          ctx.lineTo(x, height - padding.bottom);
+          ctx.stroke();
+        }
+        
+        // Horizontal grid lines for ABV (every 5%)
+        for (let i = 0; i <= 3; i++) {
+          const y = padding.top + (i / 3) * chartHeight;
+          ctx.beginPath();
+          ctx.moveTo(padding.left, y);
+          ctx.lineTo(width - padding.right, y);
+          ctx.stroke();
+        }
+        
+        // Horizontal grid lines for volume (every 10 gallons)
+        ctx.strokeStyle = '#eee';
+        for (let i = 0; i <= 5; i++) {
+          const y = padding.top + (i / 5) * chartHeight;
+          ctx.beginPath();
+          ctx.moveTo(padding.left, y);
+          ctx.lineTo(width - padding.right, y);
+          ctx.stroke();
+        }
+      }
+      
+      // Draw flavor section backgrounds
+      function drawFlavorSections() {
+        const sections = [
+          {start: 0, end: 75, color: 'rgba(200,200,200,0.3)'},      // Initial
+          {start: 75, end: 120, color: 'rgba(221,160,221,0.3)'},    // Dry, beachy
+          {start: 120, end: 195, color: 'rgba(135,206,250,0.3)'},   // Developing sweetness
+          {start: 195, end: 330, color: 'rgba(255,165,0,0.3)'},     // Stone fruit
+          {start: 330, end: 570, color: 'rgba(144,238,144,0.3)'},   // Sweet
+          {start: 570, end: 600, color: 'rgba(255,99,71,0.3)'}      // Dry finish
+        ];
+        
+        sections.forEach(section => {
+          const x1 = padding.left + (section.start / maxTimeValue) * chartWidth;
+          const x2 = padding.left + (section.end / maxTimeValue) * chartWidth;
+          ctx.fillStyle = section.color;
+          ctx.fillRect(x1, padding.top, x2 - x1, chartHeight);
+        });
+      }
+      
+      // Draw axes
+      function drawAxes() {
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 1;
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'center';
+        
+        // X-axis (time)
+        ctx.beginPath();
+        ctx.moveTo(padding.left, height - padding.bottom);
+        ctx.lineTo(width - padding.right, height - padding.bottom);
+        ctx.stroke();
+        
+        // X-axis labels (hours)
+        for (let i = 0; i <= 10; i++) {
+          const x = padding.left + (i / 10) * chartWidth;
+          const hour = 9 + Math.floor(i * 60 / 60);
+          const minute = Math.floor((i * 60) % 60);
+          const timeLabel = `${hour}:${minute.toString().padStart(2, '0')}`;
+          
+          ctx.fillStyle = '#000';
+          ctx.fillText(timeLabel, x, height - padding.bottom + 20);
+        }
+        
+        // Left Y-axis (ABV)
+        ctx.beginPath();
+        ctx.moveTo(padding.left, padding.top);
+        ctx.lineTo(padding.left, height - padding.bottom);
+        ctx.stroke();
+        
+        // Left Y-axis labels (ABV)
+        ctx.textAlign = 'right';
+        for (let i = 0; i <= 3; i++) {
+          const y = padding.top + (i / 3) * chartHeight;
+          const abvValue = maxABV - i * 5;
+          
+          ctx.fillStyle = '#000';
+          ctx.fillText(`${abvValue}%`, padding.left - 10, y + 5);
+        }
+        
+        // Right Y-axis (Volume)
+        ctx.beginPath();
+        ctx.moveTo(width - padding.right, padding.top);
+        ctx.lineTo(width - padding.right, height - padding.bottom);
+        ctx.stroke();
+        
+        // Right Y-axis labels (Volume)
+        ctx.textAlign = 'left';
+        for (let i = 0; i <= 5; i++) {
+          const y = padding.top + (i / 5) * chartHeight;
+          const volumeValue = maxVolume - i * 10;
+          
+          ctx.fillStyle = '#008000';
+          ctx.fillText(`${volumeValue} gal`, width - padding.right + 10, y + 5);
+        }
+        
+        // Axis titles
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#000';
+        ctx.fillText('Time', width / 2, height - 10);
+        
+        ctx.save();
+        ctx.translate(15, height / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillStyle = '#000';
+        ctx.fillText('ABV (%)', 0, 0);
+        ctx.restore();
+        
+        ctx.save();
+        ctx.translate(width - 15, height / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillStyle = '#008000';
+        ctx.fillText('Volume (gallons)', 0, 0);
+        ctx.restore();
+      }
+      
+      // Draw ABV line
+      function drawABVLine() {
+        ctx.strokeStyle = 'blue';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        
+        abvData.forEach((point, index) => {
+          const x = padding.left + (point.timeValue / maxTimeValue) * chartWidth;
+          const y = padding.top + ((maxABV - point.abv) / (maxABV - minABV)) * chartHeight;
+          
+          if (index === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        });
+        
+        ctx.stroke();
+        
+        // Draw ABV points
+        abvData.forEach(point => {
+          const x = padding.left + (point.timeValue / maxTimeValue) * chartWidth;
+          const y = padding.top + ((maxABV - point.abv) / (maxABV - minABV)) * chartHeight;
+          
+          ctx.beginPath();
+          ctx.arc(x, y, 3, 0, 2 * Math.PI);
+          ctx.fillStyle = 'blue';
+          ctx.fill();
+        });
+      }
+      
+      // Draw volume line
+      function drawVolumeLine() {
+        ctx.strokeStyle = 'green';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        
+        volumeData.forEach((point, index) => {
+          const x = padding.left + (point.timeValue / maxTimeValue) * chartWidth;
+          const y = padding.top + ((maxVolume - point.volume) / maxVolume) * chartHeight;
+          
+          if (index === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        });
+        
+        ctx.stroke();
+        
+        // Draw volume points
+        volumeData.forEach(point => {
+          const x = padding.left + (point.timeValue / maxTimeValue) * chartWidth;
+          const y = padding.top + ((maxVolume - point.volume) / maxVolume) * chartHeight;
+          
+          ctx.beginPath();
+          ctx.arc(x, y, 3, 0, 2 * Math.PI);
+          ctx.fillStyle = 'green';
+          ctx.fill();
+        });
+      }
+      
+      // Draw target volume line (35 gallons)
+      function drawTargetLine() {
+        const targetY = padding.top + ((maxVolume - 35) / maxVolume) * chartHeight;
+        
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.moveTo(padding.left, targetY);
+        ctx.lineTo(width - padding.right, targetY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        // Add label
+        ctx.fillStyle = 'red';
+        ctx.textAlign = 'right';
+        ctx.fillText('Target: 35 gallons', width - padding.right - 10, targetY - 5);
+      }
+      
+      // Draw sensory note markers
+      function drawNoteMarkers() {
+        abvData.filter(point => point.note).forEach(point => {
+          const x = padding.left + (point.timeValue / maxTimeValue) * chartWidth;
+          const y = padding.top + ((maxABV - point.abv) / (maxABV - minABV)) * chartHeight;
+          
+          ctx.beginPath();
+          ctx.arc(x, y, 6, 0, 2 * Math.PI);
+          ctx.fillStyle = 'yellow';
+          ctx.fill();
+          ctx.strokeStyle = 'black';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        });
+      }
+      
+      // Draw everything
+      drawFlavorSections();
+      drawGrid();
+      drawAxes();
+      drawABVLine();
+      drawVolumeLine();
+      drawTargetLine();
+      drawNoteMarkers();
+    });
+  </script>
+</body>
+</html>
