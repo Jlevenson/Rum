@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rum Cost vs. Sales Price Comparison</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            color: #3d5a80;
+            text-align: center;
+        }
+        .comparison-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+        .bottle-container {
+            width: 200px;
+            text-align: center;
+            margin: 0 20px 30px;
+        }
+        .bottle {
+            position: relative;
+            height: 400px;
+            width: 140px;
+            margin: 0 auto;
+            border-radius: 10px 10px 50px 50px;
+            border: 2px solid #ccc;
+            overflow: hidden;
+            background-color: #f8f9fa;
+        }
+        .bottle-neck {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            border-bottom: 2px solid #ccc;
+            border-radius: 10px 10px 0 0;
+            background-color: #f8f9fa;
+            z-index: 2;
+        }
+        .bottle-section {
+            position: absolute;
+            width: 100%;
+            left: 0;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+        .sales-fill {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 23%;
+            background-color: #38b000;
+            color: white;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .versus {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 0 20px;
+            color: #666;
+        }
+        .alert-box {
+            background-color: #ffebeb;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .alert-box h3 {
+            color: #d90429;
+            margin-top: 0;
+        }
+        .info-box {
+            background-color: #e9f3fd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .info-box h3 {
+            margin-top: 0;
+        }
+        .cost-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .cost-item {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 12px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .cost-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .color-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .solution-box {
+            background-color: #f1faee;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .solution-options {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        .solution-option {
+            background-color: white;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 10px;
+            min-width: 200px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .solution-option p {
+            margin: 5px 0;
+        }
+        .why-list {
+            list-style-type: disc;
+            padding-left: 30px;
+        }
+        .why-list li {
+            margin-bottom: 8px;
+        }
+        .price-tag {
+            font-weight: bold;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Rum Cost vs. Sales Price</h1>
+    <h2>Based on 1,000 bottles produced last year</h2>
+    
+    <div class="comparison-container">
+        <div class="bottle-container">
+            <h3>What Goes Into Each Bottle</h3>
+            <div class="bottle">
+                <div class="bottle-neck"></div>
+                
+                <!-- Production -->
+                <div class="bottle-section" style="bottom: 77%; height: 42%; background-color: #FF9F1C;">
+                    Production<br>42%
+                </div>
+                
+                <!-- Raw Materials -->
+                <div class="bottle-section" style="bottom: 44%; height: 33%; background-color: #2EC4B6;">
+                    Raw Materials<br>33%
+                </div>
+                
+                <!-- Other Costs -->
+                <div class="bottle-section" style="bottom: 28%; height: 16%; background-color: #E71D36;">
+                    Other Costs<br>16%
+                </div>
+                
+                <!-- Aging -->
+                <div class="bottle-section" style="bottom: 6%; height: 6%; background-color: #9253A1;">
+                    Aging<br>6%
+                </div>
+                
+                <!-- Packaging -->
+                <div class="bottle-section" style="bottom: 0; height: 6%; background-color: #00A896;">
+                    Packaging<br>3%
+                </div>
+            </div>
+            <div class="price-tag">COST: $434.49</div>
+        </div>
+        
+        <div class="versus">VS</div>
+        
+        <div class="bottle-container">
+            <h3>What We Sell It For</h3>
+            <div class="bottle">
+                <div class="bottle-neck"></div>
+                <div class="sales-fill">$100</div>
+            </div>
+            <div class="price-tag">PRICE: $100.00</div>
+        </div>
+    </div>
+    
+    <div class="alert-box">
+        <h3>Each Bottle Currently Costs More Than We Sell It For</h3>
+        <p>The cost to make each bottle ($434.49) is more than four times what we sell it for ($100)</p>
+        <p><strong>Current deficit per bottle: $334.49</strong></p>
+    </div>
+    
+    <div class="info-box">
+        <h3>What Makes Up The Cost of Each Bottle</h3>
+        <div class="cost-grid">
+            <div class="cost-item">
+                <div class="cost-header">
+                    <div class="color-dot" style="background-color: #FF9F1C;"></div>
+                    <strong>Production:</strong>
+                    <span style="margin-left: 10px;">$182.61 (42% of cost)</span>
+                </div>
+                <p>People making the rum, electricity, and fuel</p>
+                <p style="color: #d90429;"><strong>This is 183% of our sales price!</strong></p>
+            </div>
+            
+            <div class="cost-item">
+                <div class="cost-header">
+                    <div class="color-dot" style="background-color: #2EC4B6;"></div>
+                    <strong>Raw Materials:</strong>
+                    <span style="margin-left: 10px;">$143.70 (33% of cost)</span>
+                </div>
+                <p>Sugarcane and transportation</p>
+                <p style="color: #d90429;"><strong>This is 144% of our sales price!</strong></p>
+            </div>
+            
+            <div class="cost-item">
+                <div class="cost-header">
+                    <div class="color-dot" style="background-color: #E71D36;"></div>
+                    <strong>Other Costs:</strong>
+                    <span style="margin-left: 10px;">$68.44 (16% of cost)</span>
+                </div>
+                <p>Conservation projects, taxes, and travel</p>
+                <p style="color: #d90429;"><strong>This is 68% of our sales price!</strong></p>
+            </div>
+            
+            <div class="cost-item">
+                <div class="cost-header">
+                    <div class="color-dot" style="background-color: #9253A1;"></div>
+                    <strong>Aging:</strong>
+                    <span style="margin-left: 10px;">$24.39 (6% of cost)</span>
+                </div>
+                <p>Wooden barrels to age the rum</p>
+                <p style="color: #d90429;"><strong>This is 24% of our sales price!</strong></p>
+            </div>
+            
+            <div class="cost-item">
+                <div class="cost-header">
+                    <div class="color-dot" style="background-color: #00A896;"></div>
+                    <strong>Packaging:</strong>
+                    <span style="margin-left: 10px;">$15.34 (3% of cost)</span>
+                </div>
+                <p>Bottles, corks, and labels</p>
+                <p style="color: #d90429;"><strong>This is 15% of our sales price!</strong></p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="info-box" style="background-color: #fff3d4;">
+        <h3>Why Do We Do This?</h3>
+        <p>Even though each bottle costs more to make than we sell it for, we're building something special:</p>
+        <ul class="why-list">
+            <li>We're developing a premium brand that will be worth more in the future</li>
+            <li>We're supporting local farmers and workers in Dominica</li>
+            <li>We're funding conservation of sea turtles, whales, and coral reefs</li>
+            <li>As we make more bottles, our cost per bottle will go down</li>
+            <li>We're investing in sustainable, high-quality production methods</li>
+        </ul>
+    </div>
+    
+    <div class="solution-box">
+        <h3>How We'll Become Profitable</h3>
+        <p>To break even, we need to either:</p>
+        <div class="solution-options">
+            <div class="solution-option">
+                <p><strong>Increase production to<br>~4,300 bottles per year</strong></p>
+                <p style="font-size: 14px;">(keeping the same price)</p>
+            </div>
+            
+            <div class="solution-option" style="display: flex; align-items: center; justify-content: center;">
+                <p><strong>OR</strong></p>
+            </div>
+            
+            <div class="solution-option">
+                <p><strong>Charge $434.49 per bottle</strong></p>
+                <p style="font-size: 14px;">(keeping the same production)</p>
+            </div>
+        </div>
+        <p style="margin-top: 20px; font-size: 14px;">We'll likely do a combination of both - make more bottles while gradually increasing prices as our reputation grows.</p>
+    </div>
+</body>
+</html>
