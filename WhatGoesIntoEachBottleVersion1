@@ -1,0 +1,126 @@
+import React from 'react';
+
+const RumBottleCostVisualization = () => {
+  // Cost data for a single bottle in ECD (based on 1,000 bottles produced)
+  const costPerBottle = {
+    "Production": 493.05,
+    "Raw Materials": 388.00,
+    "Other Costs": 184.80,
+    "Aging": 65.86,
+    "Packaging": 41.42
+  };
+  
+  const totalCost = 1173.13;
+  
+  // Colors for each category
+  const categoryColors = {
+    "Production": "#FF9F1C", // orange
+    "Raw Materials": "#2EC4B6", // teal
+    "Other Costs": "#E71D36", // red
+    "Aging": "#9253A1", // purple
+    "Packaging": "#00A896" // green
+  };
+  
+  // Simple descriptions for each category a 6th grader would understand
+  const categoryDescriptions = {
+    "Production": "People making the rum, electricity, and fuel",
+    "Raw Materials": "Sugarcane and transportation",
+    "Other Costs": "Conservation projects, taxes, and travel",
+    "Aging": "Wooden barrels to age the rum",
+    "Packaging": "Bottles, corks, and labels"
+  };
+  
+  // Example items for each category
+  const categoryExamples = {
+    "Production": ["Paying workers", "Electricity", "Propane gas"],
+    "Raw Materials": ["Buying sugarcane", "Truck deliveries"],
+    "Other Costs": ["Sea turtle protection", "Taxes", "Travel expenses"],
+    "Aging": ["Wooden barrels", "Shipping barrels"],
+    "Packaging": ["Glass bottles", "Labels", "Corks"]
+  };
+  
+  return (
+    <div className="p-4 max-w-4xl mx-auto font-sans">
+      <h1 className="text-2xl font-bold text-center mb-6">What Goes Into Each Bottle of Rum</h1>
+      <h2 className="text-xl text-center mb-8">Total Cost: ${totalCost.toFixed(2)} ECD per bottle</h2>
+      
+      <div className="flex flex-col lg:flex-row mb-8">
+        {/* Bottle visualization */}
+        <div className="flex-1 flex justify-center">
+          <div className="relative w-44 h-96">
+            {/* Bottle shape */}
+            <div className="absolute inset-0 bg-gray-100 rounded-b-3xl rounded-t-lg border-2 border-gray-300 overflow-hidden">
+              {/* Cost layers inside bottle */}
+              {Object.entries(costPerBottle).map(([category, cost], index) => {
+                const height = (cost / totalCost) * 100;
+                const prevHeight = Object.entries(costPerBottle)
+                  .slice(0, index)
+                  .reduce((sum, [_, c]) => sum + (c / totalCost) * 100, 0);
+                
+                return (
+                  <div 
+                    key={category}
+                    className="absolute w-full"
+                    style={{
+                      bottom: `${prevHeight}%`,
+                      height: `${height}%`,
+                      backgroundColor: categoryColors[category]
+                    }}
+                  >
+                    <div className="h-full flex items-center justify-center text-white font-bold text-xs text-center px-2">
+                      {height >= 10 && `${category} ${Math.round(height)}%`}
+                    </div>
+                  </div>
+                );
+              })}
+              
+              {/* Bottle neck */}
+              <div className="absolute top-0 left-0 right-0 h-8 bg-gray-100 rounded-t-lg border-b-2 border-gray-300"></div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Legend and explanation */}
+        <div className="flex-1 mt-8 lg:mt-0">
+          <h3 className="text-lg font-bold mb-4">What Each Dollar Pays For:</h3>
+          
+          <div className="space-y-4">
+            {Object.entries(costPerBottle).map(([category, cost]) => {
+              const percentage = (cost / totalCost) * 100;
+              
+              return (
+                <div key={category} className="border rounded-lg p-3 shadow-sm">
+                  <div className="flex items-center mb-2">
+                    <div 
+                      className="w-6 h-6 rounded-full mr-2" 
+                      style={{ backgroundColor: categoryColors[category] }}
+                    ></div>
+                    <span className="font-bold">{category}:</span>
+                    <span className="ml-2">${cost.toFixed(2)} ECD ({Math.round(percentage)}%)</span>
+                  </div>
+                  
+                  <p className="text-sm mb-2">{categoryDescriptions[category]}</p>
+                  
+                  <div className="text-xs text-gray-600">
+                    <span className="font-semibold">Examples:</span>
+                    <ul className="list-disc ml-5">
+                      {categoryExamples[category].map((example, i) => (
+                        <li key={i}>{example}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+      
+      <div className="bg-blue-50 p-4 rounded-lg text-center">
+        <p className="text-sm">This shows how the money from each bottle supports local farmers, workers, and nature conservation in Dominica.</p>
+      </div>
+    </div>
+  );
+};
+
+export default RumBottleCostVisualization;
