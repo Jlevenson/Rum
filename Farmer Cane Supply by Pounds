@@ -1,0 +1,373 @@
+import React, { useState, useEffect } from 'react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+
+const FarmerPoundsChart = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [processedData, setProcessedData] = useState([]);
+  const [villageTotals, setVillageTotals] = useState([]);
+  
+  // Raw data for all farmers - derived from payment amounts by converting back to pounds
+  // Most payments appear to be at $0.60 per pound
+  const farmerData = [
+    { name: "Gracien Fountain", village: "La Plaine", pounds: 68483 },
+    { name: "Danny Newton", village: "La Plaine", pounds: 37428 },
+    { name: "Ashton Samuel", village: "La Plaine", pounds: 27421 },
+    { name: "Harris St Ville", village: "Delice/Boetica", pounds: 16725 },
+    { name: "Leon JnoBaptiste", village: "Reviere Cyrique", pounds: 10270 },
+    { name: "Brent Carty", village: "Despore", pounds: 14588 },
+    { name: "Charles Watty", village: "Wesley", pounds: 9705 },
+    { name: "Auxentius Maxime", village: "Belles", pounds: 18350 },
+    { name: "Jean-Charles Joseph", village: "Tranto", pounds: 5372 },
+    { name: "Kerdian Luke", village: "Belles", pounds: 9053 },
+    { name: "Barry St Rose", village: "La Plaine", pounds: 8500 },
+    { name: "Kenneth Charles", village: "Corona", pounds: 7093 },
+    { name: "Dorian Laudant", village: "Petite Soufriere", pounds: 13383 },
+    { name: "Patrick Espirit", village: "Despore", pounds: 13976 },
+    { name: "Dwayne Thomas", village: "Delice", pounds: 11920 },
+    { name: "Jerry Prevost", village: "La Plaine", pounds: 5296 },
+    { name: "Lambert Hilaire", village: "Delice", pounds: 7118 },
+    { name: "Rodriguez Blaize", village: "La Plaine", pounds: 3531 },
+    { name: "Sean George", village: "Reviere Cyrique", pounds: 6073 },
+    { name: "Seraphina Laurent", village: "Pond Casse", pounds: 6276 },
+    { name: "Everinton Phillip", village: "Wesley", pounds: 3813 },
+    { name: "Brenton Williams", village: "Grenville", pounds: 5158 },
+    { name: "Sheldon Simone", village: "La Plaine", pounds: 5870 },
+    { name: "Henderson Romain", village: "Rosalie", pounds: 7850 },
+    { name: "Julian Jeremy", village: "Wesley", pounds: 4711 },
+    { name: "Jenner Guiste", village: "Delice", pounds: 4390 },
+    { name: "Roy Espirit", village: "Belles", pounds: 6850 },
+    { name: "Julia Canoville", village: "Belles", pounds: 3652 },
+    { name: "Conly Durand", village: "Belles", pounds: 3165 },
+    { name: "Bernard Laurent", village: "Wesley", pounds: 4348 },
+    { name: "Cletus Joseph", village: "Castle Bruce", pounds: 9393 },
+    { name: "Edward Watty", village: "Wesley", pounds: 2805 },
+    { name: "Randy Laudat", village: "Petite Soufriere", pounds: 2846 },
+    { name: "Egbert Nelson", village: "Marigot", pounds: 2383 },
+    { name: "Pap Oscar", village: "Rosalie", pounds: 7980 },
+    { name: "Kenrick Whilshire", village: "Castle Bruce", pounds: 2218 },
+    { name: "Yannick George", village: "Grand fond", pounds: 2410 },
+    { name: "Connie Telemacque", village: "Wesley", pounds: 1759 },
+    { name: "Remy Joseph", village: "Marigot/Calibishie", pounds: 2653 },
+    { name: "Eyes Joseph", village: "Wesley", pounds: 2002 },
+    { name: "Alexander Richards", village: "Anse de Mai", pounds: 1488 },
+    { name: "Joseph Jacob", village: "Wesley/Marigot", pounds: 1880 },
+    { name: "Kensworth Knight", village: "Wesley", pounds: 1803 },
+    { name: "Leban Telemacque", village: "Wesley", pounds: 2228 },
+    { name: "Irene Celestine", village: "Anse de Mai", pounds: 741 },
+    { name: "Fernita Pascal", village: "Reviere Cyrique", pounds: 1225 },
+    { name: "Debra Mark", village: "Delice", pounds: 4213 },
+    { name: "Goddard Rodney", village: "Delice", pounds: 3173 },
+    { name: "Jean Dieuvainjahan", village: "Belles", pounds: 1822 },
+    { name: "Jennifer Espirit", village: "Belles", pounds: 3896 },
+    { name: "Cletus Challenger", village: "Castle Bruce", pounds: 1608 },
+    { name: "Paul Carlton", village: "Wesley/Marigot", pounds: 2280 },
+    { name: "Bernad Isaac", village: "Anse de Mai", pounds: 509 },
+    { name: "Maryanne Diggs", village: "Anse de Mai", pounds: 1478 },
+    { name: "Samuel Augustine", village: "Wesley/Woodford Hill", pounds: 1173 },
+    { name: "Lungsford Duban", village: "Wesley", pounds: 2675 },
+    { name: "Nicholas Espirit", village: "Belles", pounds: 514 },
+    { name: "Kelvin Watty", village: "Wesley", pounds: 391 },
+    { name: "Carlos Challenger", village: "Belles", pounds: 3399 },
+    { name: "Franccess Diggs", village: "Anse de Mai", pounds: 907 },
+    { name: "David Robin", village: "Wesley", pounds: 412 },
+    { name: "Jamestia Jno Baptiste", village: "Reviere Cyrique", pounds: 533 },
+    { name: "Edmund Sylvester", village: "Marigot", pounds: 955 },
+    { name: "John Luke", village: "Belles", pounds: 2111 },
+    { name: "Kevin James", village: "Belles", pounds: 1027 },
+    { name: "Anna Rose", village: "Wesley", pounds: 245 },
+    { name: "Lorielle Laurant", village: "Wesley", pounds: 466 },
+    { name: "Julitta Williams", village: "Wesley", pounds: 754 },
+    { name: "Charlesworth Joseph", village: "Wesley", pounds: 901 },
+    { name: "Verna Jacob", village: "Wesley", pounds: 1412 },
+    { name: "Monica Espirit", village: "Belles", pounds: 431 },
+    { name: "Jovin Greenaway", village: "Salibia", pounds: 440 },
+    { name: "Prian Williams", village: "Wesley", pounds: 528 },
+    { name: "Vickenson Edwards", village: "Wesley", pounds: 393 },
+    { name: "Serge Badio", village: "Belles", pounds: 1047 },
+    { name: "Joe Languuere", village: "Belles", pounds: 461 },
+    { name: "Karel white", village: "Bense", pounds: 163 },
+    { name: "Dyanne Pascal", village: "Reviere Cyrique", pounds: 155 },
+    { name: "Salim Poydore", village: "Grand fond", pounds: 493 },
+    { name: "Ricky Joseph", village: "Canefield", pounds: 1354 }
+  ];
+  
+  // Village color mapping
+  const villageColors = {
+    "La Plaine": "#2a9d8f",
+    "Belles": "#e9c46a",
+    "Wesley": "#f4a261",
+    "Delice": "#e76f51",
+    "Despore": "#264653",
+    "Petite Soufriere": "#8ecae6",
+    "Anse de Mai": "#219ebc",
+    "Castle Bruce": "#023047",
+    "Reviere Cyrique": "#ffb703",
+    "Pond Casse": "#fb8500",
+    "Grand fond": "#606c38",
+    "Marigot": "#283618",
+    "Rosalie": "#dda15e",
+    "Carib Territory": "#bc6c25",
+    "Tranto": "#14213d",
+    "Grenville": "#fca311",
+    "Corona": "#e63946",
+    "Woodford Hill": "#a8dadc",
+    "Salibia": "#457b9d",
+    "Bense": "#1d3557",
+    "Canefield": "#84a98c",
+    "Boetica": "#cad2c5"
+  };
+  
+  // For villages with multiple names or "/" in the name
+  const getNormalizedVillageName = (villageName) => {
+    if (villageName.includes("/")) {
+      return villageName.split("/")[0];
+    }
+    return villageName;
+  };
+  
+  // Get village color
+  const getVillageColor = (villageName) => {
+    const normalizedName = getNormalizedVillageName(villageName);
+    return villageColors[normalizedName] || "#adb5bd";
+  };
+  
+  // Process data when inputs change
+  useEffect(() => {
+    const processData = () => {
+      let data = [...farmerData];
+      
+      // Filter by search term
+      if (searchTerm) {
+        const term = searchTerm.toLowerCase();
+        data = data.filter(farmer => 
+          farmer.name.toLowerCase().includes(term) || 
+          farmer.village.toLowerCase().includes(term)
+        );
+      }
+      
+      // Group by village
+      const villages = {};
+      data.forEach(farmer => {
+        const normalizedVillage = getNormalizedVillageName(farmer.village);
+        if (!villages[normalizedVillage]) {
+          villages[normalizedVillage] = [];
+        }
+        villages[normalizedVillage].push(farmer);
+      });
+      
+      // Calculate village totals and sort villages by total pounds
+      const villageTotalPounds = Object.keys(villages).map(village => {
+        const totalPounds = villages[village].reduce((sum, farmer) => sum + farmer.pounds, 0);
+        const farmerCount = villages[village].length;
+        return { 
+          village,
+          totalPounds,
+          farmerCount,
+          color: villageColors[village] || "#adb5bd"
+        };
+      }).sort((a, b) => b.totalPounds - a.totalPounds);
+      
+      setVillageTotals(villageTotalPounds);
+      
+      // Sort farmers within each village by pounds
+      Object.keys(villages).forEach(village => {
+        villages[village].sort((a, b) => b.pounds - a.pounds);
+      });
+      
+      // Flatten the data in order of villages by total pounds
+      const processedData = [];
+      villageTotalPounds.forEach(villageData => {
+        const villageFarmers = villages[villageData.village];
+        
+        // Add separator for the first farmer in each village
+        if (villageFarmers.length > 0) {
+          // Add village header as a non-data element
+          processedData.push({
+            name: `--- ${villageData.village} - ${villageData.totalPounds.toLocaleString()} lbs (${villageData.farmerCount} farmers) ---`,
+            village: villageData.village,
+            pounds: 0,
+            isVillageHeader: true,
+            color: villageData.color
+          });
+          
+          // Add all farmers in this village
+          villageFarmers.forEach(farmer => {
+            processedData.push({
+              ...farmer,
+              isVillageHeader: false,
+              color: villageData.color
+            });
+          });
+        }
+      });
+      
+      setProcessedData(processedData);
+    };
+    
+    processData();
+  }, [searchTerm]);
+  
+  // Custom tooltip to display additional information
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      
+      // Don't show tooltip for village headers
+      if (data.isVillageHeader) return null;
+      
+      return (
+        <div className="bg-white p-3 border border-gray-300 rounded shadow-md">
+          <p className="font-bold">{data.name}</p>
+          <p>Village: {data.village}</p>
+          <p className="text-green-600 font-semibold">Total Cane: {data.pounds.toLocaleString()} lbs</p>
+        </div>
+      );
+    }
+    return null;
+  };
+  
+  const CustomizedTick = ({ x, y, payload }) => {
+    const data = processedData.find(item => item.name === payload.value);
+    
+    if (!data) return null;
+    
+    // Style differently if this is a village header
+    if (data.isVillageHeader) {
+      return (
+        <g transform={`translate(${x},${y})`}>
+          <text
+            x={-5}
+            y={0}
+            dy={4}
+            textAnchor="end"
+            fill={data.color || "#333"}
+            fontWeight="bold"
+            fontSize={12}
+          >
+            {payload.value}
+          </text>
+        </g>
+      );
+    }
+    
+    // Regular farmer name
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <text
+          x={-5}
+          y={0}
+          dy={4}
+          textAnchor="end"
+          fill="#666"
+          fontSize={11}
+        >
+          {payload.value}
+        </text>
+      </g>
+    );
+  };
+  
+  const CustomizedBar = (props) => {
+    const { x, y, width, height, payload } = props;
+    
+    // Skip bars for village headers
+    if (payload.isVillageHeader) {
+      return null;
+    }
+    
+    return (
+      <rect
+        x={x}
+        y={y}
+        width={width}
+        height={height}
+        fill={payload.color}
+        fillOpacity={0.8}
+        className="recharts-bar-rectangle"
+      />
+    );
+  };
+  
+  return (
+    <div className="p-4 max-w-full mx-auto bg-gray-50 rounded-lg shadow-md">
+      <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">
+        Rosalie Bay Rum - Farmer Cane Supply by Pounds (2023-2024)
+      </h1>
+      <p className="text-center mb-4 text-gray-600">
+        Villages ordered by total cane weight (highest to lowest) with farmers ordered by pounds supplied (highest to lowest)
+      </p>
+      
+      <div className="flex justify-center mb-4">
+        <div>
+          <input
+            type="text"
+            placeholder="Search farmer or village..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="border rounded px-3 py-1 w-64"
+          />
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        {villageTotals.slice(0, 3).map((village, index) => (
+          <div key={village.village} className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
+            <div className="flex items-center justify-between">
+              <h3 className="font-bold" style={{ color: village.color }}>{index + 1}. {village.village}</h3>
+              <span className="text-xl font-bold">{village.totalPounds.toLocaleString()} lbs</span>
+            </div>
+            <p className="text-sm text-gray-600">{village.farmerCount} farmers</p>
+          </div>
+        ))}
+      </div>
+      
+      <div className="bg-white p-4 rounded-lg shadow mb-4 relative">
+        <ResponsiveContainer width="100%" height={Math.max(600, processedData.length * 30)}>
+          <BarChart
+            data={processedData}
+            layout="vertical"
+            margin={{ top: 5, right: 30, left: 250, bottom: 5 }}
+            barSize={16}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis 
+              type="number"
+              tickFormatter={(value) => `${value.toLocaleString()} lbs`}
+            />
+            <YAxis 
+              type="category" 
+              dataKey="name" 
+              width={240}
+              tick={<CustomizedTick />}
+              interval={0} // Force showing every tick
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Bar 
+              dataKey="pounds" 
+              name="Cane Weight (lbs)" 
+              shape={<CustomizedBar />}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+      
+      <div className="bg-white p-4 rounded-lg shadow">
+        <h2 className="text-xl font-semibold mb-2">Cane Supply Insights:</h2>
+        <ul className="list-disc pl-6 space-y-1">
+          <li>La Plaine provides the largest volume of cane at approximately {villageTotals[0]?.totalPounds.toLocaleString()} pounds</li>
+          <li>The top 3 villages account for {Math.round((villageTotals.slice(0, 3).reduce((sum, v) => sum + v.totalPounds, 0) / villageTotals.reduce((sum, v) => sum + v.totalPounds, 0)) * 100)}% of all cane by weight</li>
+          <li>Within villages, there's typically one lead farmer who produces significantly more than others</li>
+          <li>La Plaine has both the highest total cane volume and the highest individual farmer volumes</li>
+          <li>Smaller villages often have more even distribution of cane production among farmers</li>
+        </ul>
+        
+        <div className="mt-4 text-sm text-gray-500">
+          <p>* Colors represent different villages</p>
+          <p>* Pounds data calculated from 2023-2024 payment records using standard rate of $0.60/lb</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default FarmerPoundsChart;
