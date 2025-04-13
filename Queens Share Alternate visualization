@@ -1,0 +1,250 @@
+import React from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ComposedChart, Rectangle, ReferenceArea } from 'recharts';
+
+const QueensShareGraph = () => {
+  const distillationData = [
+    { time: "9:27", timeHour: 9.45, abv: 91.12, section: "Foreshots", volume: 0, flavor: "Initial" },
+    { time: "9:42", timeHour: 9.7, abv: 86.01, section: "Foreshots", volume: 0, flavor: "Initial" },
+    { time: "9:57", timeHour: 9.95, abv: 84.3, section: "Foreshots", volume: 0, flavor: "Initial" },
+    { time: "10:12", timeHour: 10.2, abv: 83.93, section: "Heads", volume: 0, flavor: "Initial" },
+    { time: "10:27", timeHour: 10.45, abv: 83.73, section: "Heads", volume: 0, flavor: "Initial" },
+    { time: "10:42", timeHour: 10.7, abv: 83.66, section: "Heads/Hearts", volume: 0, flavor: "Dry, beachy", hasTastingNote: true, note: "Cut to Hearts: Dry but sweet after taste" },
+    { time: "10:57", timeHour: 10.95, abv: 83.41, section: "Hearts", volume: 2.21, flavor: "Dry, beachy" },
+    { time: "11:12", timeHour: 11.2, abv: 83.02, section: "Hearts", volume: 3.37, flavor: "Dry, beachy" },
+    { time: "11:27", timeHour: 11.45, abv: 82.57, section: "Hearts", volume: 5.23, flavor: "Developing sweetness", hasTastingNote: true, note: "Sweet and caramel" },
+    { time: "11:42", timeHour: 11.7, abv: 82.41, section: "Hearts", volume: 6.63, flavor: "Developing sweetness" },
+    { time: "11:57", timeHour: 11.95, abv: 82.36, section: "Hearts", volume: 8.02, flavor: "Developing sweetness" },
+    { time: "12:12", timeHour: 12.2, abv: 82.32, section: "Hearts", volume: 9.88, flavor: "Developing sweetness" },
+    { time: "12:27", timeHour: 12.45, abv: 82.14, section: "Hearts", volume: 11.28, flavor: "Developing sweetness" },
+    { time: "12:42", timeHour: 12.7, abv: 82.12, section: "Hearts", volume: 13.14, flavor: "Stone fruit notes", hasTastingNote: true, note: "Nutty honey sweet with a dry finish" },
+    { time: "12:57", timeHour: 12.95, abv: 81.9, section: "Hearts", volume: 14.3, flavor: "Stone fruit notes" },
+    { time: "13:12", timeHour: 13.2, abv: 81.86, section: "Hearts", volume: 16.16, flavor: "Stone fruit notes" },
+    { time: "13:27", timeHour: 13.45, abv: 81.78, section: "Hearts", volume: 17.79, flavor: "Stone fruit notes" },
+    { time: "13:42", timeHour: 13.7, abv: 81.62, section: "Hearts", volume: 19.41, flavor: "Stone fruit notes" },
+    { time: "13:57", timeHour: 13.95, abv: 81.56, section: "Hearts", volume: 20.81, flavor: "Stone fruit notes" },
+    { time: "14:12", timeHour: 14.2, abv: 81.49, section: "Hearts", volume: 22.44, flavor: "Stone fruit notes" },
+    { time: "14:27", timeHour: 14.45, abv: 81.52, section: "Hearts", volume: 24.06, flavor: "Sweet", hasTastingNote: true, note: "Sweet, nutty, fruity like plum with a dry finish" },
+    { time: "14:42", timeHour: 14.7, abv: 81.44, section: "Hearts", volume: 25.46, flavor: "Sweet" },
+    { time: "14:57", timeHour: 14.95, abv: 81.31, section: "Hearts", volume: 27.32, flavor: "Sweet" },
+    { time: "15:12", timeHour: 15.2, abv: 81.27, section: "Hearts", volume: 28.71, flavor: "Sweet" },
+    { time: "15:27", timeHour: 15.45, abv: 81.38, section: "Hearts", volume: 30.34, flavor: "Sweet", hasTastingNote: true, note: "Nutty fruity and sweet" },
+    { time: "15:42", timeHour: 15.7, abv: 81.11, section: "Hearts", volume: 31.74, flavor: "Sweet" },
+    { time: "15:57", timeHour: 15.95, abv: 80.96, section: "Hearts", volume: 33.36, flavor: "Sweet" },
+    { time: "16:12", timeHour: 16.2, abv: 80.93, section: "Hearts", volume: 34.99, flavor: "Sweet" },
+    { time: "16:27", timeHour: 16.45, abv: 80.94, section: "Hearts", volume: 36.39, flavor: "Sweet", hasTastingNote: true, note: "Sweet with hint of caramel/honey, nutty" },
+    { time: "16:42", timeHour: 16.7, abv: 80.79, section: "Hearts", volume: 38.01, flavor: "Sweet" },
+    { time: "16:57", timeHour: 16.95, abv: 80.84, section: "Hearts", volume: 39.41, flavor: "Sweet" },
+    { time: "17:12", timeHour: 17.2, abv: 80.89, section: "Hearts", volume: 41.04, flavor: "Sweet" },
+    { time: "17:27", timeHour: 17.45, abv: 80.74, section: "Hearts", volume: 42.43, flavor: "Sweet" },
+    { time: "17:57", timeHour: 17.95, abv: 80.69, section: "Hearts", volume: 44.52, flavor: "Sweet" },
+    { time: "18:12", timeHour: 18.2, abv: 80.6, section: "Hearts", volume: 46.85, flavor: "Dry finish", hasTastingNote: true, note: "Notes of nutty, like coconut water" },
+    { time: "18:27", timeHour: 18.45, abv: 80.44, section: "Hearts", volume: 48.48, flavor: "Dry finish" },
+    { time: "18:42", timeHour: 18.7, abv: 80.39, section: "Hearts", volume: 49.64, flavor: "Dry finish", hasTastingNote: true, note: "Grassy earthy with tad sweetness" },
+    { time: "18:57", timeHour: 18.95, abv: 80.06, section: "Hearts", volume: 51.03, flavor: "Dry finish" }
+  ];
+
+  // Define flavor profile sections
+  const flavorSections = [
+    { name: "Initial", color: "#f0f0f0", start: 9.45, end: 10.45 },
+    { name: "Dry, beachy", color: "#ffdfea", start: 10.45, end: 11.2 },
+    { name: "Developing sweetness", color: "#d0e8ff", start: 11.2, end: 12.7 },
+    { name: "Stone fruit notes", color: "#ffeacc", start: 12.7, end: 14.45 },
+    { name: "Sweet", color: "#e0f8e0", start: 14.45, end: 18.2 },
+    { name: "Dry finish", color: "#ffe0e0", start: 18.2, end: 19 }
+  ];
+
+  // Custom tooltip to show all relevant information
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      return (
+        <div className="bg-white p-3 border border-gray-300 rounded shadow-md text-sm">
+          <p className="font-bold text-gray-800">{data.time}</p>
+          <p className="text-blue-600">ABV: {data.abv}%</p>
+          <p className="text-green-600">Volume: {data.volume} gallons</p>
+          <p className="text-purple-600">Flavor Profile: {data.flavor}</p>
+          {data.hasTastingNote && (
+            <p className="text-orange-600 font-semibold">Note: {data.note}</p>
+          )}
+        </div>
+      );
+    }
+    return null;
+  };
+
+  // Custom marker for tasting notes
+  const TastingNoteMarker = ({ cx, cy, payload }) => {
+    if (payload.hasTastingNote) {
+      return (
+        <circle 
+          cx={cx} 
+          cy={cy} 
+          r={6} 
+          fill="#ffaa00" 
+          stroke="#fff" 
+          strokeWidth={2}
+        />
+      );
+    }
+    return null;
+  };
+
+  return (
+    <div className="w-full p-4 bg-gray-50 rounded-lg shadow-md">
+      <h2 className="text-xl font-bold text-center mb-2 text-gray-800">Queen's Share Distillation Analysis</h2>
+      <p className="text-center mb-6 text-gray-600">April 10, 2025 · Starting Charge: 225 Gallons at 50% ABV · Final Collection: 51.03 gallons</p>
+      
+      <div className="bg-white p-4 rounded-lg shadow-sm">
+        <ResponsiveContainer width="100%" height={500}>
+          <ComposedChart
+            data={distillationData}
+            margin={{ top: 20, right: 30, left: 10, bottom: 100 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+            
+            {/* Flavor profile background sections */}
+            {flavorSections.map((section, index) => (
+              <ReferenceArea
+                key={`section-${index}`}
+                x1={section.start}
+                x2={section.end}
+                y1={80}
+                y2={95}
+                fill={section.color}
+                fillOpacity={0.6}
+              />
+            ))}
+            
+            <XAxis 
+              dataKey="timeHour"
+              type="number"
+              domain={[9, 19]}
+              ticks={[9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]}
+              tickFormatter={(value) => `${Math.floor(value)}:${((value % 1) * 60).toFixed(0).padStart(2, '0')}`}
+              label={{ value: 'Time', position: 'insideBottom', offset: -5 }}
+            />
+            
+            <YAxis 
+              yAxisId="left"
+              domain={[80, 95]} 
+              label={{ value: 'ABV (%)', angle: -90, position: 'insideLeft' }}
+            />
+            
+            <YAxis 
+              yAxisId="right"
+              orientation="right"
+              domain={[0, 50]} 
+              label={{ value: 'Volume (gallons)', angle: 90, position: 'insideRight' }}
+            />
+            
+            <Tooltip content={<CustomTooltip />} />
+            
+            {/* Target Volume Reference Line */}
+            <Line
+              yAxisId="right"
+              type="monotone"
+              dataKey={() => 35}
+              stroke="red"
+              strokeDasharray="5 5"
+              name="Target Volume (35 gallons)"
+              dot={false}
+              activeDot={false}
+              isAnimationActive={false}
+            />
+            
+            {/* ABV Line */}
+            <Line 
+              yAxisId="left"
+              type="monotone" 
+              dataKey="abv" 
+              name="ABV (%) - Left Axis" 
+              stroke="blue" 
+              strokeWidth={2}
+              dot={false}
+              activeDot={{ r: 5, fill: 'blue' }}
+            />
+            
+            {/* Tasting Note Points on ABV Line */}
+            <Line 
+              yAxisId="left"
+              type="monotone" 
+              dataKey="abv" 
+              name="Tasting Notes" 
+              stroke="none" 
+              dot={<TastingNoteMarker />}
+              activeDot={false}
+              isAnimationActive={false}
+              legendType="none"
+            />
+            
+            {/* Volume Line */}
+            <Line 
+              yAxisId="right"
+              type="monotone" 
+              dataKey="volume" 
+              name="Volume (gallons) - Right Axis" 
+              stroke="green" 
+              strokeWidth={2}
+              dot={{ r: 3, fill: 'green' }}
+              activeDot={{ r: 5, fill: 'green' }}
+            />
+            
+            <Legend verticalAlign="bottom" height={120} />
+          </ComposedChart>
+        </ResponsiveContainer>
+        
+        {/* Flavor profile legend */}
+        <div className="flex flex-wrap justify-center mt-2 gap-2">
+          {flavorSections.map((section, index) => (
+            <div key={`legend-${index}`} className="flex items-center">
+              <div 
+                className="w-4 h-4 mr-1" 
+                style={{ backgroundColor: section.color, border: '1px solid #ccc' }}
+              ></div>
+              <span className="text-sm">{section.name}</span>
+            </div>
+          ))}
+          <div className="flex items-center">
+            <div className="w-4 h-4 mr-1 rounded-full" style={{ backgroundColor: '#ffaa00' }}></div>
+            <span className="text-sm">Tasting Note</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-8 h-1 mr-1" style={{ backgroundColor: 'red', borderStyle: 'dashed' }}></div>
+            <span className="text-sm">Target Volume (35 gallons)</span>
+          </div>
+        </div>
+      </div>
+      
+      {/* Run Summary */}
+      <div className="mt-8 bg-white p-4 rounded-lg shadow-sm">
+        <h3 className="text-lg font-bold text-center mb-4">Run Summary</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <ul className="list-disc pl-6 space-y-1">
+              <li><span className="font-semibold">Run Duration:</span> 9.5 hours (9:27 - 18:57)</li>
+              <li><span className="font-semibold">Final Volume:</span> 51.03 gallons</li>
+              <li><span className="font-semibold">Hearts ABV Range:</span> 80.06% - 83.66%</li>
+              <li><span className="font-semibold">ABV Decline Rate:</span> ~0.31% per hour during hearts collection</li>
+              <li><span className="font-semibold">Target Volume:</span> 35 gallons (reached at ~16:12)</li>
+            </ul>
+          </div>
+          <div>
+            <p className="font-semibold mb-1">Sensory Notes:</p>
+            <ul className="list-disc pl-6 space-y-1">
+              <li><span className="font-semibold">10:42:</span> "Dry but sweet after taste"</li>
+              <li><span className="font-semibold">11:27:</span> "Sweet and caramel"</li>
+              <li><span className="font-semibold">12:42:</span> "Nutty honey sweet with a dry finish"</li>
+              <li><span className="font-semibold">14:27:</span> "Sweet, nutty, fruity like plum with a dry finish"</li>
+              <li><span className="font-semibold">15:27:</span> "Nutty fruity and sweet"</li>
+              <li><span className="font-semibold">16:27:</span> "Sweet with hint of caramel/honey, nutty"</li>
+              <li><span className="font-semibold">18:12:</span> "Notes of nutty, like coconut water"</li>
+              <li><span className="font-semibold">18:42:</span> "Grassy earthy with tad sweetness"</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default QueensShareGraph;
