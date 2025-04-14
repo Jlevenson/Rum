@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rosalie Bay Rum Tasting Flight Placemat</title>
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            background-color: #f8f5e6;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .placemat {
+            width: 900px;
+            height: 580px;
+            background-color: #fff;
+            border: 2px solid #2a5555;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+            padding: 30px;
+            overflow: hidden;
+            margin: 20px;
+        }
+        
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 180px;
+            font-weight: bold;
+            color: rgba(42, 85, 85, 0.03);
+            z-index: 0;
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #2a5555;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header h1 {
+            color: #2a5555;
+            font-size: 28px;
+            margin: 0 0 5px 0;
+            letter-spacing: 2px;
+        }
+        
+        .header h2 {
+            color: #3c7373;
+            font-size: 16px;
+            font-weight: normal;
+            margin: 0;
+            font-style: italic;
+        }
+        
+        .rum-flight {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .rum-item {
+            flex: 1;
+            margin: 0 8px;
+            padding: 12px;
+            background-color: #f9f9f5;
+            border-radius: 8px;
+            border: 1px solid #e0e0d1;
+            position: relative;
+        }
+        
+        .rum-item h3 {
+            text-align: center;
+            color: #2a5555;
+            margin: 0 0 5px 0;
+            font-size: 16px;
+            letter-spacing: 1px;
+        }
+        
+        .rum-item h4 {
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+            font-style: italic;
+            margin: 0 0 15px 0;
+            font-weight: normal;
+        }
+        
+        .glass-circle {
+            width: 60px;
+            height: 60px;
+            border: 2px dashed #2a5555;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            opacity: 0.5;
+        }
+        
+        .note-heading {
+            color: #2a5555;
+            font-size: 13px;
+            font-weight: bold;
+            margin: 10px 0 2px 0;
+        }
+        
+        .note-text {
+            color: #555;
+            font-size: 11px;
+            margin: 0 0 8px 0;
+            line-height: 1.4;
+        }
+        
+        .tasting-guide {
+            background-color: #f0f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+            border: 1px solid #d5e5e5;
+        }
+        
+        .tasting-guide h3 {
+            color: #2a5555;
+            font-size: 16px;
+            text-align: center;
+            margin: 0 0 10px 0;
+        }
+        
+        .tasting-steps {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 0 5px;
+        }
+        
+        .step-number {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-color: #2a5555;
+            color: white;
+            border-radius: 50%;
+            line-height: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .step-text {
+            font-size: 11px;
+            color: #444;
+        }
+        
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .mission-box, .heritage-box {
+            flex: 1;
+            padding: 10px 15px;
+            background-color: #f9f9f5;
+            border: 1px solid #e0e0d1;
+            border-radius: 8px;
+        }
+        
+        .mission-box {
+            margin-right: 10px;
+        }
+        
+        .heritage-box {
+            margin-left: 10px;
+        }
+        
+        .box-title {
+            color: #2a5555;
+            font-weight: bold;
+            font-size: 14px;
+            margin: 0 0 8px 0;
+            text-align: center;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #d5e5e5;
+            padding-bottom: 5px;
+        }
+        
+        .box-text {
+            color: #555;
+            margin: 0;
+            line-height: 1.4;
+        }
+        
+        .queens-share {
+            background-color: #f9f2e8;
+            border-color: #e5d5c0;
+        }
+        
+        .queens-share h3 {
+            color: #8B4513;
+        }
+        
+        .queens-share .note-heading {
+            color: #8B4513;
+        }
+    </style>
+</head>
+<body>
+    <div class="placemat">
+        <div class="watermark">RB</div>
+        
+        <div class="header">
+            <h1>ROSALIE BAY RUM</h1>
+            <h2>Premium Dominican Rum - Tasting Flight</h2>
+        </div>
+        
+        <div class="rum-flight">
+            <div class="rum-item">
+                <h3>KATALU RUM</h3>
+                <h4>Fresh Cane Juice-based Rum</h4>
+                
+                <div class="glass-circle"></div>
+                
+                <div class="note-heading">Nose:</div>
+                <p class="note-text">Fresh, vibrant, and inviting with clean, grassy sweetness, light fruitiness, and an authentic cane-forward profile.</p>
+                
+                <div class="note-heading">Palate:</div>
+                <p class="note-text">Creamy texture with subtle citrus hints and natural sweetness. Crisp, bright mid-palate with exceptional smoothness and an airy profile.</p>
+                
+                <div class="note-heading">Finish:</div>
+                <p class="note-text">Clean and refreshing with lingering notes of powdered sugar, lemongrass, and a touch of bitter lemon peel for structure.</p>
+            </div>
+            
+            <div class="rum-item">
+                <h3>BARANA</h3>
+                <h4>Molasses Based Fresh Rum</h4>
+                
+                <div class="glass-circle"></div>
+                
+                <div class="note-heading">Nose:</div>
+                <p class="note-text">Deeper aroma with hints of molasses, tropical fruit, and subtle herbaceous notes balanced with a gentle spice backbone.</p>
+                
+                <div class="note-heading">Palate:</div>
+                <p class="note-text">Silky texture with richer body and natural complexity. Notes of caramelized sugar, dried fruits, and a hint of vanilla create a rounded flavor experience.</p>
+                
+                <div class="note-heading">Finish:</div>
+                <p class="note-text">Medium-length finish with pleasant warmth and lingering notes of brown sugar, tropical fruits, and subtle wild herbs.</p>
+            </div>
+            
+            <div class="rum-item">
+                <h3>BARANA DARK</h3>
+                <h4>Our Special Dark Rum</h4>
+                
+                <div class="glass-circle"></div>
+                
+                <div class="note-heading">Nose:</div>
+                <p class="note-text">Complex bouquet of dried fruits, subtle oak, vanilla, and a touch of baking spices, complemented by the natural cane character.</p>
+                
+                <div class="note-heading">Palate:</div>
+                <p class="note-text">Rich, smooth entry with notes of caramel, chocolate, dried fruits, and gentle wood influence. Balanced sweetness with depth and character.</p>
+                
+                <div class="note-heading">Finish:</div>
+                <p class="note-text">Long, warming finish with layers of flavor that evolve from sweet to subtly spiced, with lingering oak and a hint of tropical fruit.</p>
+            </div>
+            
+            <div class="rum-item queens-share">
+                <h3>QUEEN'S SHARE</h3>
+                <h4>Serey Lanmè - Treasures of the Sea</h4>
+                
+                <div class="glass-circle"></div>
+                
+                <div class="note-heading">Nose:</div>
+                <p class="note-text">Luxurious and complex with deep notes of honeyed fruit, toasted oak, and warm baking spices. Rich with subtle maritime influence and tropical florals.</p>
+                
+                <div class="note-heading">Palate:</div>
+                <p class="note-text">Incredibly smooth and full-bodied with exceptional depth. Concentrated flavors of dried tropical fruit, toffee, vanilla bean, and subtle dark chocolate with delicate salinity.</p>
+                
+                <div class="note-heading">Finish:</div>
+                <p class="note-text">Remarkably long and complex with evolving layers. Warm spice notes give way to lingering tropical fruit and a hint of sea-salt caramel that invites contemplation.</p>
+            </div>
+        </div>
+        
+        <div class="tasting-guide">
+            <h3>HOW TO TASTE RUM LIKE AN EXPERT</h3>
+            <div class="tasting-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-text"><strong>Appearance</strong><br>Observe color and clarity</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-text"><strong>Nose</strong><br>First without swirling, then with</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-text"><strong>Palate</strong><br>Small sip, coat your mouth</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-text"><strong>Development</strong><br>Note how flavors evolve</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-text"><strong>Finish</strong><br>Lingering flavors and sensations</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="mission-box">
+                <div class="box-title">CONSERVATION MISSION</div>
+                <p class="box-text">Every bottle of Rosalie Bay Rum directly funds critical marine conservation work in Dominica. We're protecting endangered sea turtles, restoring vital coral reefs, and creating safe habitats for sperm whales. By enjoying our rum, you're directly supporting our "Pour to Protect" mission — each sip helps save our seas.</p>
+            </div>
+            
+            <div class="heritage-box">
+                <div class="box-title">CRAFTSMANSHIP & HERITAGE</div>
+                <p class="box-text">Our rum is crafted using traditional methods that honor Dominica's rich heritage. Every step of our process is done by hand—from cutting the cane to bottling the final spirit. We work with heirloom cane varieties grown organically by local farmers from small family plots throughout Dominica.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
