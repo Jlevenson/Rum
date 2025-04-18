@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jake's Data Visualization & AI Projects</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e67e22;
+            --light-bg: #f8f9fa;
+            --dark-color: #212529;
+            --light-gray: #ecf0f1;
+            --medium-gray: #bdc3c7;
+            --text-color: #333333;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--light-bg);
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            margin-bottom: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+        
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .project-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid var(--medium-gray);
+        }
+        
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .card-header {
+            padding: 15px 20px;
+            background-color: var(--light-gray);
+            border-bottom: 1px solid var(--medium-gray);
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .card-content {
+            padding: 20px;
+        }
+        
+        .card-content p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: medium;
+            transition: background-color 0.3s ease;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-accent {
+            background-color: var(--accent-color);
+        }
+        
+        .btn-accent:hover {
+            background-color: #d35400;
+        }
+        
+        footer {
+            margin-top: 60px;
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            border-top: 1px solid #ddd;
+        }
+        
+        .section-heading {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--medium-gray);
+        }
+        
+        .section {
+            margin-bottom: 60px;
+        }
+        
+        .section-description {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            color: #666;
+        }
+        
+        /* Category labels */
+        .category-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            margin-right: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .category-business {
+            background-color: var(--secondary-color);
+        }
+        
+        .category-conservation {
+            background-color: #27ae60;
+        }
+        
+        .category-agriculture {
+            background-color: #8e44ad;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to Jake's GitHub Page</h1>
+        <p class="subtitle">Where I play with data visualization and AI for better decision making and conveying complex information</p>
+    </header>
+    
+    <section class="section">
+        <div class="section-heading">
+            <h2>Business Analytics Visualizations</h2>
+        </div>
+        <p class="section-description">Interactive visualizations that help simplify complex business data for better decision making</p>
+        
+        <div class="project-grid">
+            <div class="project-card">
+                <div class="card-header">
+                    <span class="category-badge category-business">Cost Analysis</span>
+                    Rum Production Economics
+                </div>
+                <div class="card-content">
+                    <h3>Rum Cost vs. Price Gap</h3>
+                    <p>This visualization breaks down our production costs compared to retail and wholesale prices, showing the economic challenges of craft rum production.</p>
+                    <a href="rum-cost-vs-price-gap.html" class="btn">View Visualization</a>
+                </div>
+            </div>
+            
+            <div class="project-card">
+                <div class="card-header">
+                    <span class="category-badge category-business">Pricing</span>
+                    Product Pricing Structure
+                </div>
+                <div class="card-content">
+                    <h3>Rum Product Pricing Guide</h3>
+                    <p>Explore our complete pricing strategy for current and upcoming rum products, including both retail and wholesale pricing.</p>
+                    <a href="rosalie-bay-rum-pricing.html" class="btn">View Pricing Data</a>
+                </div>
+            </div>
+            
+            <div class="project-card">
+                <div class="card-header">
+                    <span class="category-badge category-business">Marketing</span>
+                    Retail Strategy
+                </div>
+                <div class="card-content">
+                    <h3>Retailer Pricing Analysis</h3>
+                    <p>Detailed breakdown of our retailer pricing structure with profit margins and recommended selling prices.</p>
+                    <a href="retailer-pricing-html.html" class="btn">View Retailer Data</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="section">
+        <div class="section-heading">
+            <h2>Agricultural Data Visualizations</h2>
+        </div>
+        <p class="section-description">Visualizations that track agricultural production, farmer payments, and supply chain data</p>
+        
+        <div class="project-grid">
+            <div class="project-card">
+                <div class="card-header">
+                    <span class="category-badge category-agriculture">Farmer Data</span>
+                    Payment Analysis
+                </div>
+                <div class="card-content">
+                    <h3>Farmer Payment Distribution</h3>
+                    <p>Review the distribution of payments to our local sugarcane farmers across different communities in Dominica.</p>
+                    <a href="farmer-payments.html" class="btn">View Farmer Data</a>
+                </div>
+            </div>
+            
+            <div class="project-card">
+                <div class="card-header">
+                    <span class="category-badge category-agriculture">Production</span>
+                    Rum Production Visualization
+                </div>
+                <div class="card-content">
+                    <h3>Rosalie Bay Visualization</h3>
+                    <p>Interactive data visualization showcasing our rum production process and metrics over time.</p>
+                    <a href="rosalie-bay-visualization-html.html" class="btn">View Production Data</a>
+                </div>
+            </div>
+            
+            <div class="project-card">
+                <div class="card-header">
+                    <span class="category-badge category-agriculture">Supply Chain</span>
+                    Cane Supply Data
+                </div>
+                <div class="card-content">
+                    <h3>Sugarcane Supply Analysis</h3>
+                    <p>Visualization of our sugarcane supply chain, including volume by village and distribution patterns.</p>
+                    <a href="farmer-cane-supply.html" class="btn">View Supply Data</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="section">
+        <div class="section-heading">
+            <h2>Conservation Data Visualizations</h2>
+        </div>
+        <p class="section-description">Tracking our conservation efforts and environmental impact through data visualization</p>
+        
+        <div class="project-grid">
+            <div class="project-card">
+                <div class="card-header">
+                    <span class="category-badge category-conservation">Wildlife</span>
+                    Sea Turtle Monitoring
+                </div>
+                <div class="card-content">
+                    <h3>Sea Turtle Data Tracker</h3>
+                    <p>Interactive visualization of sea turtle nesting patterns, hatching rates, and conservation metrics over time.</p>
+                    <a href="sea-turtle-data.html" class="btn">View Turtle Data</a>
+                </div>
+            </div>
+            
+            <div class="project-card">
+                <div class="card-header">
+                    <span class="category-badge category-conservation">Sustainability</span>
+                    Carbon Footprint
+                </div>
+                <div class="card-content">
+                    <h3>Production Carbon Impact</h3>
+                    <p>Analysis of our carbon footprint and sustainability initiatives throughout the rum production process.</p>
+                    <a href="#" class="btn">Coming Soon</a>
+                </div>
+            </div>
+            
+            <div class="project-card">
+                <div class="card-header">
+                    <span class="category-badge category-conservation">Marine</span>
+                    Ocean Conservation
+                </div>
+                <div class="card-content">
+                    <h3>Marine Conservation Impact</h3>
+                    <p>Visualization of our marine conservation efforts and their impact on local ecosystems.</p>
+                    <a href="#" class="btn">Coming Soon</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <p>© 2025 Jake's Data Visualization Projects</p>
+    </footer>
+</body>
+</html>
