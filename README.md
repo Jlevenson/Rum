@@ -6,8 +6,6 @@ From fermentation tracking and cask aging trends to ingredient cost analysis and
 
 Explore the notebooks and visualizations to see how we’re using data to refine every step of the field-to-flask journey.
 
-<a href="rum-cost-vs-price-gap.html">View My Attempt at Visualizing Rum Cost Breakdown</a>
-
 
 <div class="project-card">
   <h2>Rum Cost Analysis</h2>
