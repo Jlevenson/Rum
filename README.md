@@ -9,4 +9,10 @@ Explore the notebooks and visualizations to see how we’re using data to refine
 <a href="rum-cost-vs-price-gap.html">View My Attempt at Visualizing Rum Cost Breakdown</a>
 
 
+<div class="project-card">
+  <h2>Rum Cost Analysis</h2>
+  <p>See a breakdown of our production costs versus retail prices, showing the unique economic challenges of craft rum production.</p>
+  <a href="rum-cost-vs-price-gap.html" class="button">View Cost Breakdown</a>
+</div>
+
 
