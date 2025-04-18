@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rosalie Bay Rum - Farmer Data Visualization</title>
+  
+  <!-- Load React -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  
+  <!-- Load Recharts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.9.0/Recharts.min.js"></script>
+  
+  <!-- Load Babel to support JSX -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.22.13/babel.min.js"></script>
+  
+  <!-- Tailwind CSS for styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f3f4f6;
+      padding: 20px;
+    }
+    
+    .app-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .chart-container {
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .control-panel {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .tab-button {
+      background-color: #e5e7eb;
+      color: #374151;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    
+    .tab-button:hover {
+      background-color: #d1d5db;
+    }
+    
+    .tab-button.active {
+      background-color: #3b82f6;
+      color: white;
+    }
+    
+    .sort-button {
+      background-color: #f3f4f6;
+      color: #4b5563;
+      border: 1px solid #d1d5db;
+      padding: 0.25rem 0.75rem;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      transition: all 0.2s;
+    }
+    
+    .sort-button:hover {
+      background-color: #e5e7eb;
+    }
+    
+    .sort-button.active {
+      background-color: #4b5563;
+      color: white;
+      border-color: #4b5563;
+    }
+    
+    .search-input {
+      border: 1px solid #d1d5db;
+      border-radius: 0.25rem;
+      padding: 0.5rem;
+      width: 100%;
+      max-width: 16rem;
+    }
+    
+    .village-card {
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1);
+      padding: 0.75rem;
+      transition: transform 0.2s;
+    }
+    
+    .village-card:hover {
+      transform: scale(1.02);
+    }
+    
+    .tooltip {
+      background-color: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.25rem;
+      padding: 0.75rem;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+    
+    @media (max-width: 768px) {
+      .control-panel {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .search-input {
+        max-width: none;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+    const { 
+      BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, 
+      PieChart, Pie, Cell 
+    } = Recharts;
+    
+    const FarmerDataVisualization = () => {
+      // State variables
+      const [viewMode, setViewMode] = useState('individuals');
+      const [sortBy, setSortBy] = useState('amount');
+      const [sortDirection, setSortDirection] = useState('desc');
+      const [searchTerm, setSearchTerm] = useState('');
+      const [activeTab, setActiveTab] = useState('payments');
+      
+      // Raw farmer data
+      const farmerData = [
+        { name: "Gracien Fountain", village: "La Plaine", payment: 41090, pounds: 68483 },
+        { name: "Danny Newton", village: "La Plaine", payment: 22457, pounds: 37428 },
+        { name: "Ashton Samuel", village: "La Plaine", payment: 16453, pounds: 27421 },
+        { name: "Harris St Ville", village: "Delice/Boetica", payment: 10035, pounds: 16725 },
+        { name: "Leon JnoBaptiste", village: "Reviere Cyrique", payment: 6162, pounds: 10270 },
+        { name: "Brent Carty", village: "Despore", payment: 8753, pounds: 14588 },
+        { name: "Charles Watty", village: "Wesley", payment: 5823, pounds: 9705 },
+        { name: "Auxentius Maxime", village: "Belles", payment: 11010, pounds: 18350 },
+        { name: "Jean-Charles Joseph", village: "Tranto", payment: 3223, pounds: 5372 },
+        { name: "Kerdian Luke", village: "Belles", payment: 5432, pounds: 9053 },
+        { name: "Barry St Rose", village: "La Plaine", payment: 5100, pounds: 8500 },
+        { name: "Kenneth Charles", village: "Corona", payment: 4256, pounds: 7093 },
+        { name: "Dorian Laudant", village: "Petite Soufriere", payment: 8030, pounds: 13383 },
+        { name: "Patrick Espirit", village: "Despore", payment: 8386, pounds: 13976 },
+        { name: "Dwayne Thomas", village: "Delice", payment: 7152, pounds: 11920 },
+        { name: "Jerry Prevost", village: "La Plaine", payment: 3178, pounds: 5296 },
+        { name: "Lambert Hilaire", village: "Delice", payment: 4271, pounds: 7118 },
+        { name: "Rodriguez Blaize", village: "La Plaine", payment: 2119, pounds: 3531 },
+        { name: "Sean George", village: "Reviere Cyrique", payment: 3644, pounds: 6073 },
+        { name: "Seraphina Laurent", village: "Pond Casse", payment: 3766, pounds: 6276 },
+        { name: "Everinton Phillip", village: "Wesley", payment: 2288, pounds: 3813 },
+        { name: "Brenton Williams", village: "Grenville", payment: 3095, pounds: 5158 },
+        { name: "Sheldon Simone", village: "La Plaine", payment: 3522, pounds: 5870 },
+        { name: "Henderson Romain", village: "Rosalie", payment: 4710, pounds: 7850 },
+        { name: "Julian Jeremy", village: "Wesley", payment: 2827, pounds: 4711 },
+        { name: "Jenner Guiste", village: "Delice", payment: 2634, pounds: 4390 },
+        { name: "Roy Espirit", village: "Belles", payment: 4110, pounds: 6850 },
+        { name: "Julia Canoville", village: "Belles", payment: 2191, pounds: 3652 },
+        { name: "Conly Durand", village: "Belles", payment: 1899, pounds: 3165 },
+        { name: "Bernard Laurent", village: "Wesley", payment: 2609, pounds: 4348 },
+        { name: "Cletus Joseph", village: "Castle Bruce", payment: 5636, pounds: 9393 },
+        { name: "Edward Watty", village: "Wesley", payment: 1683, pounds: 2805 },
+        { name: "Randy Laudat", village: "Petite Soufriere", payment: 1708, pounds: 2846 },
+        { name: "Egbert Nelson", village: "Marigot", payment: 1430, pounds: 2383 },
+        { name: "Pap Oscar", village: "Rosalie", payment: 4788, pounds: 7980 },
+        { name: "Kenrick Whilshire", village: "Castle Bruce", payment: 1331, pounds: 2218 },
+        { name: "Yannick George", village: "Grand fond", payment: 1446, pounds: 2410 },
+        { name: "Connie Telemacque", village: "Wesley", payment: 1055, pounds: 1759 },
+        { name: "Remy Joseph", village: "Marigot/Calibishie", payment: 1592, pounds: 2653 },
+        { name: "Eyes Joseph", village: "Wesley", payment: 1201, pounds: 2002 },
+        { name: "Alexander Richards", village: "Anse de Mai", payment: 893, pounds: 1488 },
+        { name: "Joseph Jacob", village: "Wesley/Marigot", payment: 1128, pounds: 1880 },
+        { name: "Kensworth Knight", village: "Wesley", payment: 1082, pounds: 1803 },
+        { name: "Leban Telemacque", village: "Wesley", payment: 1337, pounds: 2228 },
+        { name: "Irene Celestine", village: "Anse de Mai", payment: 445, pounds: 741 },
+        { name: "Fernita Pascal", village: "Reviere Cyrique", payment: 735, pounds: 1225 },
+        { name: "Debra Mark", village: "Delice", payment: 2528, pounds: 4213 },
+        { name: "Goddard Rodney", village: "Delice", payment: 1904, pounds: 3173 },
+        { name: "Jean Dieuvainjahan", village: "Belles", payment: 1093, pounds: 1822 },
+        { name: "Jennifer Espirit", village: "Belles", payment: 2338, pounds: 3896 },
+        { name: "Cletus Challenger", village: "Castle Bruce", payment: 965, pounds: 1608 },
+        { name: "Paul Carlton", village: "Wesley/Marigot", payment: 1368, pounds: 2280 },
+        { name: "Bernad Isaac", village: "Anse de Mai", payment: 305, pounds: 509 },
+        { name: "Maryanne Diggs", village: "Anse de Mai", payment: 887, pounds: 1478 },
+        { name: "Samuel Augustine", village: "Wesley/Woodford Hill", payment: 704, pounds: 1173 },
+        { name: "Lungsford Duban", village: "Wesley", payment: 1605, pounds: 2675 },
+        { name: "Nicholas Espirit", village: "Belles", payment: 308, pounds: 514 },
+        { name: "Kelvin Watty", village: "Wesley", payment: 235, pounds: 391 },
+        { name: "Carlos Challenger", village: "Belles", payment: 2039, pounds: 3399 },
+        { name: "Franccess Diggs", village: "Anse de Mai", payment: 544, pounds: 907 },
+        { name: "David Robin", village: "Wesley", payment: 247, pounds: 412 },
+        { name: "Jamestia Jno Baptiste", village: "Reviere Cyrique", payment: 320, pounds: 533 },
+        { name: "Edmund Sylvester", village: "Marigot", payment: 573, pounds: 955 },
+        { name: "John Luke", village: "Belles", payment: 1267, pounds: 2111 },
+        { name: "Kevin James", village: "Belles", payment: 616, pounds: 1027 },
+        { name: "Anna Rose", village: "Wesley", payment: 147, pounds: 245 },
+        { name: "Lorielle Laurant", village: "Wesley", payment: 280, pounds: 466 },
+        { name: "Julitta Williams", village: "Wesley", payment: 452, pounds: 754 },
+        { name: "Charlesworth Joseph", village: "Wesley", payment: 541, pounds: 901 },
+        { name: "Verna Jacob", village: "Wesley", payment: 847, pounds: 1412 },
+        { name: "Monica Espirit", village: "Belles", payment: 259, pounds: 431 },
+        { name: "Jovin Greenaway", village: "Salibia", payment: 264, pounds: 440 },
+        { name: "Prian Williams", village: "Wesley", payment: 317, pounds: 528 },
+        { name: "Vickenson Edwards", village: "Wesley", payment: 236, pounds: 393 },
+        { name: "Serge Badio", village: "Belles", payment: 628, pounds: 1047 },
+        { name: "Joe Languuere", village: "Belles", payment: 277, pounds: 461 },
+        { name: "Karel white", village: "Bense", payment: 98, pounds: 163 },
+        { name: "Dyanne Pascal", village: "Reviere Cyrique", payment: 93, pounds: 155 },
+        { name: "Salim Poydore", village: "Grand fond", payment: 296, pounds: 493 },
+        { name: "Ricky Joseph", village: "Canefield", payment: 812, pounds: 1354 }
+      ];
+
+      // Village color mapping 
+      const villageColors = {
+        "La Plaine": "#2a9d8f",
+        "Belles": "#e9c46a",
+        "Wesley": "#f4a261",
+        "Delice": "#e76f51",
+        "Despore": "#264653",
+        "Petite Soufriere": "#8ecae6",
+        "Anse de Mai": "#219ebc",
+        "Castle Bruce": "#023047",
+        "Reviere Cyrique": "#ffb703",
+        "Pond Casse": "#fb8500",
+        "Grand fond": "#606c38",
+        "Marigot": "#283618",
+        "Rosalie": "#dda15e",
+        "Carib Territory": "#bc6c25",
+        "Tranto": "#14213d",
+        "Grenville": "#fca311",
+        "Corona": "#e63946",
+        "Woodford Hill": "#a8dadc",
+        "Salibia": "#457b9d",
+        "Bense": "#1d3557",
+        "Canefield": "#84a98c",
+        "Boetica": "#cad2c5"
+      };
+
+      // For villages with multiple names or "/" in the name
+      const getNormalizedVillageName = (villageName) => {
+        if (villageName.includes("/")) {
+          return villageName.split("/")[0];
+        }
+        return villageName;
+      };
+
+      // Get village color
+      const getVillageColor = (villageName) => {
+        const normalizedName = getNormalizedVillageName(villageName);
+        return villageColors[normalizedName] || "#adb5bd";
+      };
+
+      // Process data for display
+      const processData = () => {
+        // Set data based on active tab
+        const valueKey = activeTab === 'payments' ? 'payment' : 'pounds';
+        let processedData = [...farmerData].map(farmer => ({
+          ...farmer,
+          value: farmer[valueKey],
+          color: getVillageColor(farmer.village)
+        }));
+        
+        // Filter by search term
+        if (searchTerm) {
+          const term = searchTerm.toLowerCase();
+          processedData = processedData.filter(farmer => 
+            farmer.name.toLowerCase().includes(term) || 
+            farmer.village.toLowerCase().includes(term)
+          );
+        }
+        
+        // Sort data based on current sorting criteria
+        if (sortBy === 'amount') {
+          processedData.sort((a, b) => {
+            return sortDirection === 'desc' ? b.value - a.value : a.value - b.value;
+          });
+        } else if (sortBy === 'name') {
+          processedData.sort((a, b) => {
+            return sortDirection === 'desc' ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name);
+          });
+        } else if (sortBy === 'village') {
+          processedData.sort((a, b) => {
+            const villageComparison = sortDirection === 'desc' ? 
+              b.village.localeCompare(a.village) : a.village.localeCompare(b.village);
+            
+            // Secondary sort by amount within villages
+            if (villageComparison === 0) {
+              return b.value - a.value;
+            }
+            return villageComparison;
+          });
+        }
+        
+        return processedData;
+      };
+
+      // Process village data
+      const processVillageData = () => {
+        const valueKey = activeTab === 'payments' ? 'payment' : 'pounds';
+        const villages = {};
+        
+        // Group by village and calculate totals
+        farmerData.forEach(farmer => {
+          const normalizedVillage = getNormalizedVillageName(farmer.village);
+          if (!villages[normalizedVillage]) {
+            villages[normalizedVillage] = {
+              name: normalizedVillage,
+              value: 0,
+              farmers: 0,
+              color: getVillageColor(normalizedVillage)
+            };
+          }
+          villages[normalizedVillage].value += farmer[valueKey];
+          villages[normalizedVillage].farmers += 1;
+        });
+        
+        // Convert to array and filter by search
+        let villagesArray = Object.values(villages);
+        if (searchTerm) {
+          const term = searchTerm.toLowerCase();
+          villagesArray = villagesArray.filter(village => 
+            village.name.toLowerCase().includes(term)
+          );
+        }
+        
+        // Sort
+        if (sortBy === 'amount') {
+          villagesArray.sort((a, b) => {
+            return sortDirection === 'desc' ? b.value - a.value : a.value - b.value;
+          });
+        } else if (sortBy === 'name' || sortBy === 'village') {
+          villagesArray.sort((a, b) => {
+            return sortDirection === 'desc' ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name);
+          });
+        }
+        
+        return villagesArray;
+      };
+
+      const toggleSortDirection = () => {
+        setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc');
+      };
+
+      // Calculate top 3 villages for summary
+      const getTop3Villages = () => {
+        const valueKey = activeTab === 'payments' ? 'payment' : 'pounds';
+        const villages = {};
+        
+        farmerData.forEach(farmer => {
+          const normalizedVillage = getNormalizedVillageName(farmer.village);
+          if (!villages[normalizedVillage]) {
+            villages[normalizedVillage] = {
+              name: normalizedVillage,
+              value: 0,
+              farmers: 0,
+              color: getVillageColor(normalizedVillage)
+            };
+          }
+          villages[normalizedVillage].value += farmer[valueKey];
+          villages[normalizedVillage].farmers += 1;
+        });
+        
+        return Object.values(villages)
+          .sort((a, b) => b.value - a.value)
+          .slice(0, 3);
+      };
+
+      // Custom tooltip for bar charts
+      const CustomTooltip = ({ active, payload }) => {
+        if (active && payload && payload.length) {
+          const data = payload[0].payload;
+          const valueLabel = activeTab === 'payments' ? 'Payment' : 'Cane Supply';
+          const valuePrefix = activeTab === 'payments' ? '$' : '';
+          const valueSuffix = activeTab === 'payments' ? '' : ' lbs';
+          
+          return (
+            <div className="tooltip">
+              <p className="font-bold">{data.name}</p>
+              {viewMode === 'individuals' && <p>Village: {data.village}</p>}
+              {viewMode === 'villages' && <p>Farmers: {data.farmers}</p>}
+              <p style={{ color: '#047857', fontWeight: 600 }}>
+                {valueLabel}: {valuePrefix}{data.value.toLocaleString()}{valueSuffix}
+              </p>
+            </div>
+          );
+        }
+        return null;
+      };
+
+      // Derived data for rendering
+      const individualData = processData();
+      const villageData = processVillageData();
+      const top3Villages = getTop3Villages();
+      
+      // Value formatting for axis and tooltips
+      const formatValue = (value) => {
+        if (activeTab === 'payments') {
+          return `$${value.toLocaleString()}`;
+        } else {
+          return `${value.toLocaleString()} lbs`;
+        }
+      };
+
+      return (
+        <div className="app-container">
+          <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">
+            Rosalie Bay Rum - Farmer {activeTab === 'payments' ? 'Payments' : 'Cane Supply'} (2023-2024)
+          </h1>
+          
+          {/* Data Type Tabs */}
+          <div className="flex justify-center mb-4">
+            <div className="flex rounded-md shadow-sm" style={{ overflow: 'hidden' }}>
+              <button
+                onClick={() => setActiveTab('payments')}
+                className={`tab-button ${activeTab === 'payments' ? 'active' : ''}`}
+                style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
+              >
+                Payments ($)
+              </button>
+              <button
+                onClick={() => setActiveTab('pounds')}
+                className={`tab-button ${activeTab === 'pounds' ? 'active' : ''}`}
+                style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
+              >
+                Cane Supply (lbs)
+              </button>
+            </div>
+          </div>
+          
+          {/* View Type Tabs */}
+          <div className="flex justify-center mb-4">
+            <div className="flex rounded-md shadow-sm" style={{ overflow: 'hidden' }}>
+              <button
+                onClick={() => setViewMode('individuals')}
+                className={`tab-button ${viewMode === 'individuals' ? 'active' : ''}`}
+                style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
+              >
+                Individual Farmers
+              </button>
+              <button
+                onClick={() => setViewMode('villages')}
+                className={`tab-button ${viewMode === 'villages' ? 'active' : ''}`}
+                style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
+              >
+                Villages
+              </button>
+            </div>
+          </div>
+          
+          {/* Controls */}
+          <div className="control-panel">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-medium text-gray-700">Sort By:</span>
+              <div className="flex rounded-md shadow-sm" style={{ overflow: 'hidden' }}>
+                <button
+                  onClick={() => setSortBy('amount')}
+                  className={`sort-button ${sortBy === 'amount' ? 'active' : ''}`}
+                  style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
+                >
+                  {activeTab === 'payments' ? 'Payment Amount' : 'Pounds'}
+                </button>
+                <button
+                  onClick={() => setSortBy('name')}
+                  className={`sort-button ${sortBy === 'name' ? 'active' : ''}`}
+                  style={{ borderRadius: 0 }}
+                >
+                  {viewMode === 'individuals' ? 'Farmer Name' : 'Village Name'}
+                </button>
+                {viewMode === 'individuals' && (
+                  <button
+                    onClick={() => setSortBy('village')}
+                    className={`sort-button ${sortBy === 'village' ? 'active' : ''}`}
+                    style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
+                  >
+                    Village
+                  </button>
+                )}
+              </div>
+              
+              <button
+                onClick={toggleSortDirection}
+                className="sort-button flex items-center gap-1"
+              >
+                {sortDirection === 'desc' ? '↓ Descending' : '↑ Ascending'}
+              </button>
+            </div>
+            
+            <div>
+              <input
+                type="text"
+                placeholder={`Search ${viewMode === 'individuals' ? 'farmer or village' : 'village'}...`}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="search-input"
+              />
+            </div>
+          </div>
+          
+          {/* Top 3 Villages Summary */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            {top3Villages.map((village, index) => (
+              <div 
+                key={village.name} 
+                className="village-card"
+                style={{ borderLeft: `4px solid ${village.color}` }}
+              >
+                <div className="flex items-center justify-between">
+                  <h3 className="font-bold" style={{ color: village.color }}>
+                    {index + 1}. {village.name}
+                  </h3>
+                  <span className="text-xl font-bold">
+                    {activeTab === 'payments' 
+                      ? `$${village.value.toLocaleString()}` 
+                      : `${village.value.toLocaleString()} lbs`}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-600">{village.farmers} farmers</p>
+              </div>
+            ))}
+          </div>
+          
+          {/* Main Chart */}
+          <div className="chart-container">
+            <div style={{ height: viewMode === 'individuals' ? `${Math.max(600, individualData.length * 25)}px` : '600px' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={viewMode === 'individuals' ? individualData : villageData}
+                  layout="vertical"
+                  margin={{ top: 5, right: 30, left: 160, bottom: 5 }}
+                  barSize={viewMode === 'individuals' ? 12 : 16}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    type="number"
+                    tickFormatter={formatValue}
+                  />
+                  <YAxis
+                    type="category"
+                    dataKey="name"
+                    tick={{ fontSize: 11 }}
+                    width={160}
+                    interval={0} // Force showing every farmer name
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar
+                    dataKey="value"
+                    name={activeTab === 'payments' ? 'Payment Amount' : 'Cane Weight'}
+                  >
+                    {(viewMode === 'individuals' ? individualData : villageData).map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+          
+          {/* Insights Box */}
+          <div className="chart-container">
+            <h2 className="text-xl font-semibold mb-2">Key Insights:</h2>
+            <ul className="list-disc pl-6 space-y-1">
+              <li>La Plaine is the dominant village for cane production, with the highest total payments and highest per-farmer average</li>
+              <li>The top 3 villages account for approximately 65% of all payments</li>
+              <li>Top farmers (Gracien Fountain, Danny Newton, Ashton Samuel from La Plaine) account for about 35% of all payments</li>
+              <li>Within each village, there's typically one lead farmer who produces significantly more than others</li>
+              <li>Some smaller villages have more even distribution across farmers</li>
+            </ul>
+            
+            <div className="mt-4 text-sm text-gray-500">
+              <p>* Colors represent different villages in both views</p>
+              <p>* Data shown is from 2023-2024 payment records</p>
+            </div>
+          </div>
+          
+          <div className="text-center text-gray-500 text-sm my-4">
+            © 2025 Rosalie Bay Rum | Created for visualization of farmer payments and cane supply data
+          </div>
+        </div>
+      );
+    };
+
+    // Render the app
+    const container = document.getElementById('app');
+    const root = ReactDOM.createRoot(container);
+    root.render(<FarmerDataVisualization />);
+  </script>
+</body>
+</html>
