@@ -6,21 +6,24 @@
     <title>Jake's Data Visualization & AI Projects</title>
     <style>
         :root {
-            --primary-color: rgb(0, 61, 68);
-            --secondary-color: rgb(161, 217, 208);
-            --accent-color: rgb(184, 115, 51); /* Copper */
-            --light-color: #f8f9fa;
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e67e22;
+            --light-bg: #f8f9fa;
             --dark-color: #212529;
+            --light-gray: #ecf0f1;
+            --medium-gray: #bdc3c7;
+            --text-color: #333333;
         }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            color: var(--dark-color);
+            color: var(--text-color);
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #f5f5f5;
+            background-color: var(--light-bg);
         }
         
         header {
@@ -29,7 +32,7 @@
             margin-bottom: 40px;
             background-color: var(--primary-color);
             color: white;
-            border-radius: 10px;
+            border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         
@@ -54,16 +57,17 @@
         .project-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
+            gap: 25px;
             margin-top: 30px;
         }
         
         .project-card {
             background-color: white;
-            border-radius: 10px;
+            border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid var(--medium-gray);
         }
         
         .project-card:hover {
@@ -71,27 +75,12 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
         
-        .card-image {
-            height: 200px;
-            background-color: var(--secondary-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 24px;
+        .card-header {
+            padding: 15px 20px;
+            background-color: var(--light-gray);
+            border-bottom: 1px solid var(--medium-gray);
             font-weight: bold;
-        }
-        
-        .card-image.cost-analysis {
-            background: linear-gradient(135deg, #D03B12 0%, #006E71 100%);
-        }
-        
-        .card-image.pricing {
-            background: linear-gradient(135deg, #3a86ff 0%, #38b000 100%);
-        }
-        
-        .card-image.farmers {
-            background: linear-gradient(135deg, #ffbe0b 0%, #fb5607 100%);
+            color: var(--primary-color);
         }
         
         .card-content {
@@ -105,25 +94,25 @@
         
         .btn {
             display: inline-block;
-            background-color: var(--primary-color);
+            background-color: var(--secondary-color);
             color: white;
             padding: 10px 20px;
-            border-radius: 5px;
+            border-radius: 4px;
             text-decoration: none;
-            font-weight: bold;
+            font-weight: medium;
             transition: background-color 0.3s ease;
         }
         
         .btn:hover {
-            background-color: #005052;
+            background-color: #2980b9;
         }
         
-        .btn-secondary {
+        .btn-accent {
             background-color: var(--accent-color);
         }
         
-        .btn-secondary:hover {
-            background-color: rgb(164, 102, 45);
+        .btn-accent:hover {
+            background-color: #d35400;
         }
         
         footer {
@@ -138,15 +127,43 @@
             text-align: center;
             margin-bottom: 30px;
             position: relative;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--medium-gray);
         }
         
-        .section-heading::after {
-            content: "";
-            display: block;
-            width: 80px;
-            height: 4px;
+        .section {
+            margin-bottom: 60px;
+        }
+        
+        .section-description {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            color: #666;
+        }
+        
+        /* Category labels */
+        .category-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            margin-right: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .category-business {
             background-color: var(--secondary-color);
-            margin: 15px auto 0;
+        }
+        
+        .category-conservation {
+            background-color: #27ae60;
+        }
+        
+        .category-agriculture {
+            background-color: #8e44ad;
         }
     </style>
 </head>
@@ -156,67 +173,30 @@
         <p class="subtitle">Where I play with data visualization and AI for better decision making and conveying complex information</p>
     </header>
     
-    <section>
+    <section class="section">
         <div class="section-heading">
-            <h2>My Data Visualization Projects</h2>
+            <h2>Business Analytics Visualizations</h2>
         </div>
+        <p class="section-description">Interactive visualizations that help simplify complex business data for better decision making</p>
         
         <div class="project-grid">
             <div class="project-card">
-                <div class="card-image cost-analysis">
-                    Cost Analysis
+                <div class="card-header">
+                    <span class="category-badge category-business">Cost Analysis</span>
+                    Rum Production Economics
                 </div>
                 <div class="card-content">
-                    <h3>Rum Cost vs. Price Gap Visualization</h3>
-                    <p>This visualization breaks down our production costs compared to our retail and wholesale prices, showing the economic challenges of craft rum production.</p>
-                    <a href="rum-cost-vs-price-gap.html" class="btn">View Cost Breakdown</a>
+                    <h3>Rum Cost vs. Price Gap</h3>
+                    <p>This visualization breaks down our production costs compared to retail and wholesale prices, showing the economic challenges of craft rum production.</p>
+                    <a href="rum-cost-vs-price-gap.html" class="btn">View Visualization</a>
                 </div>
             </div>
             
             <div class="project-card">
-                <div class="card-image pricing">
-                    Pricing Information
+                <div class="card-header">
+                    <span class="category-badge category-business">Pricing</span>
+                    Product Pricing Structure
                 </div>
                 <div class="card-content">
-                    <h3>Product Pricing Structure</h3>
-                    <p>Explore our complete pricing strategy for current and upcoming rum products, including both retail and wholesale pricing.</p>
-                    <a href="rosalie-bay-rum-pricing.html" class="btn btn-secondary">View Pricing Guide</a>
-                </div>
-            </div>
-            
-            <div class="project-card">
-                <div class="card-image farmers">
-                    Farmer Data
-                </div>
-                <div class="card-content">
-                    <h3>Farmer Payment Analysis</h3>
-                    <p>Review the distribution of payments to our local sugarcane farmers across different communities in Dominica.</p>
-                    <a href="farmer-payments.html" class="btn">View Farmer Data</a>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <section style="margin-top: 60px;">
-        <div class="section-heading">
-            <h2>About Rosalie Bay Rum</h2>
-        </div>
-        
-        <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            <p>Rosalie Bay Rum is a premium Dominican cane juice rum that embodies the essence of Dominica's land, people, and conservation efforts. Our handcrafted organic rum is produced using traditional methods with a focus on sustainability and exceptional quality.</p>
-            
-            <p>Every bottle you purchase directly supports our conservation work to protect sea turtles, whales, and coral reefs in Dominica. We're not just making rum - we're creating a sustainable financial foundation for long-term marine conservation.</p>
-            
-            <blockquote style="font-style: italic; border-left: 4px solid var(--primary-color); padding-left: 20px; margin: 20px 0;">
-                "Every bottle of our handcrafted organic rum is a reflection of the land, the people, and the traditions of Dominica. From the moment the cane is hand cut to the final proofing with pristine mountain spring water, every step is intentional—honouring heritage, sustainability, and the pursuit of exceptional flavour."
-            </blockquote>
-            
-            <p>Our rum is made with four heirloom cane varieties, each with a unique flavor profile, all grown without any synthetic fertilizers or pesticides, preserving the integrity of the land and the purity of our rum.</p>
-        </div>
-    </section>
-    
-    <footer>
-        <p>© 2025 Jake's Data Visualization Projects</p>
-    </footer>
-</body>
-</html>
+                    <h3>Rum Product Pricing Guide</h3>
+                    <p>Explore our complete pricing strategy for current and upcoming rum products, including
