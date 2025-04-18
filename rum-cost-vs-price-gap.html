@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rum Cost vs Price Gap Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            color: #333;
+            text-align: center;
+        }
+        .main-container {
+            margin: 40px 0;
+        }
+        .price-column-container {
+            display: flex;
+            margin: 60px 0;
+            justify-content: center;
+            align-items: flex-end;
+            position: relative;
+        }
+        .column {
+            width: 180px;
+            margin: 0 30px;
+            text-align: center;
+            position: relative;
+        }
+        .column-label {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .column-value {
+            font-weight: bold;
+            font-size: 20px;
+            margin-top: 10px;
+        }
+        .bar {
+            width: 100%;
+            margin: 0 auto;
+            background-color: #f0f0f0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border: 1px solid #ddd;
+        }
+        .bar-section {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            position: relative;
+            padding: 8px 0;
+        }
+        .bar-label {
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+        .bar-value {
+            font-size: 16px;
+        }
+        .gap-arrow {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 60px;
+            width: 200px;
+            top: 220px;
+        }
+        .arrow-line {
+            position: absolute;
+            top: 30px;
+            width: 100%;
+            height: 3px;
+            background-color: #000000;
+        }
+        .arrow-point {
+            position: absolute;
+            top: 23px;
+            right: -12px;
+            width: 0;
+            height: 0;
+            border-top: 9px solid transparent;
+            border-bottom: 9px solid transparent;
+            border-left: 12px solid #000000;
+        }
+        .gap-label {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+            color: #ffffff;
+            font-size: 16px;
+            background-color: #000000;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        .stacked-sections {
+            display: flex;
+            flex-direction: column;
+        }
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 30px 0;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 8px 15px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            border-radius: 3px;
+        }
+        .info-box {
+            background-color: #edf6f9;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 30px 0;
+        }
+        .info-box h3 {
+            text-align: center;
+            margin-top: 0;
+        }
+        .reasons-list {
+            list-style-type: disc;
+            padding-left: 30px;
+        }
+        .reasons-list li {
+            margin-bottom: 8px;
+        }
+        .solution-box {
+            background-color: #f1faee;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        .solution-options {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        .solution-option {
+            background-color: white;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 10px;
+            min-width: 200px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .vs-label {
+            position: absolute;
+            top: 125px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 22px;
+            font-weight: bold;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>The Cost vs. Price Gap</h1>
+    <h2>For Each Bottle of Rosalie Bay Rum</h2>
+    
+    <div class="main-container">
+        <div class="price-column-container">
+            <!-- Cost Column -->
+            <div class="column">
+                <div class="column-label">WHAT IT COSTS TO MAKE</div>
+                <div class="bar" style="height: 400px;">
+                    <div class="stacked-sections">
+                        <!-- Production: 42% -->
+                        <div class="bar-section" style="height: 168px; background-color: #D03B12;">
+                            <div>
+                                <div class="bar-label">PRODUCTION</div>
+                                <div class="bar-value">$182.61</div>
+                                <div class="bar-label">(42%)</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Raw Materials: 33% -->
+                        <div class="bar-section" style="height: 132px; background-color: #006E71;">
+                            <div>
+                                <div class="bar-label">RAW MATERIALS</div>
+                                <div class="bar-value">$143.70</div>
+                                <div class="bar-label">(33%)</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Other Costs: 16% -->
+                        <div class="bar-section" style="height: 64px; background-color: #B70718;">
+                            <div>
+                                <div class="bar-label">OTHER COSTS</div>
+                                <div class="bar-value">$68.44</div>
+                                <div class="bar-label">(16%)</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Aging: 6% -->
+                        <div class="bar-section" style="height: 24px; background-color: #9253A1;">
+                            <div>
+                                <div class="bar-label">AGING</div>
+                                <div class="bar-value">$24.39</div>
+                                <div class="bar-label">(6%)</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Packaging: 3% -->
+                        <div class="bar-section" style="height: 12px; background-color: #2EC4B6;">
+                            <div style="font-size: 12px;">
+                                <div>PACKAGING</div>
+                                <div>$15.34 (3%)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column-value">$434.49</div>
+            </div>
+            
+            <div class="vs-label">VS</div>
+            
+            <!-- Price Column -->
+            <div class="column">
+                <div class="column-label">WHAT WE SELL IT FOR</div>
+                <div class="bar" style="height: 400px;">
+                    <div style="height: 308px; background-color: #f0f0f0;"></div>
+                    
+                    <!-- Retail Price -->
+                    <div class="bar-section" style="height: 60px; background-color: #3a86ff;">
+                        <div>
+                            <div class="bar-label">RETAIL PRICE</div>
+                            <div class="bar-value">$100.00</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Wholesale Price -->
+                    <div class="bar-section" style="height: 32px; background-color: #38b000;">
+                        <div>
+                            <div class="bar-label">WHOLESALE</div>
+                            <div class="bar-value">$65.00</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column-value">
+                    Retail: $100.00<br>
+                    Wholesale: $65.00
+                </div>
+            </div>
+            
+            <!-- Gap Arrow and Label -->
+            <div class="gap-arrow" style="top: 170px;">
+                <div class="arrow-line"></div>
+                <div class="arrow-point"></div>
+                <div class="gap-label">GAP: $334.49 per bottle</div>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #D03B12;"></div>
+                <span>Production: Labor, Electricity, Fuel</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #006E71;"></div>
+                <span>Raw Materials: Sugarcane, Transportation</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #B70718;"></div>
+                <span>Other Costs: Conservation, Taxes, Travel</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #9253A1;"></div>
+                <span>Aging: Barrels, Shipping</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #2EC4B6;"></div>
+                <span>Packaging: Bottles, Labels, Corks</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #3a86ff;"></div>
+                <span>Retail Price</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #38b000;"></div>
+                <span>Wholesale Price</span>
+            </div>
+        </div>
+        
+        <div class="info-box">
+            <h3>Just Production + Raw Materials ($326.31) Already Exceed Our Prices</h3>
+            <p>Even if we only counted the costs of production and raw materials, these two expenses alone exceed both our retail and wholesale prices:</p>
+            <ul>
+                <li><strong>Production + Raw Materials = $326.31</strong></li>
+                <li>This is <strong>3.3 times</strong> our retail price ($100.00)</li>
+                <li>This is <strong>5.0 times</strong> our wholesale price ($65.00)</li>
+            </ul>
+        </div>
+        
+        <div class="info-box" style="background-color: #fff3d4;">
+            <h3>Why Do We Do This?</h3>
+            <p>Even though each bottle costs more to make than we sell it for, we're building something special:</p>
+            <ul class="reasons-list">
+                <li>We're developing a premium brand that will be worth more in the future</li>
+                <li>We're supporting local farmers and workers in Dominica</li>
+                <li>We're funding conservation of sea turtles, whales, and coral reefs</li>
+                <li>As we make more bottles, our cost per bottle will decrease significantly</li>
+                <li>We're investing in sustainable, high-quality production methods</li>
+            </ul>
+        </div>
+        
+        <div class="solution-box">
+            <h3>How We'll Become Profitable</h3>
+            <p>To break even, we need to either:</p>
+            <div class="solution-options">
+                <div class="solution-option">
+                    <p><strong>Increase production to<br>~4,300 bottles per year</strong></p>
+                    <p style="font-size: 14px;">(at retail price of $100)</p>
+                </div>
+                
+                <div class="solution-option" style="display: flex; align-items: center; justify-content: center;">
+                    <p><strong>OR</strong></p>
+                </div>
+                
+                <div class="solution-option">
+                    <p><strong>Charge $434.49 per bottle</strong></p>
+                    <p style="font-size: 14px;">(keeping the same production)</p>
+                </div>
+            </div>
+            <p style="margin-top: 20px; font-size: 14px;">We'll likely do a combination of both - make more bottles while gradually increasing prices as our reputation grows.</p>
+        </div>
+    </div>
+</body>
+</html>
