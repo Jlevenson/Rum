@@ -5,4 +5,8 @@ Welcome to the data hub for Rosalie Bay Distilling. This repository contains vis
 From fermentation tracking and cask aging trends to ingredient cost analysis and bottling efficiencies, these visualizations help us bridge the gap between artisanal craft and data-driven operations. We believe in transparency, experimentation, and continuous improvement—and this space reflects that ethos.
 
 Explore the notebooks and visualizations to see how we’re using data to refine every step of the field-to-flask journey.
-https://jlevenson.github.io/Rum/rum-cost-vs-price-gap.html
+
+<a href="rum-cost-vs-price-gap.html">View My Attempt at Visualizing Rum Cost Breakdown</a>
+
+
+
