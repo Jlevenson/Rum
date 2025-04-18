@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leatherback Sea Turtle Dashboard</title>
+  <!-- Import Tailwind CSS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+  <!-- Import Recharts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prop-types/15.7.2/prop-types.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.1.12/Recharts.js"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #EBF5FB;
+    }
+    .chart-container {
+      height: 300px;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { 
+      LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
+      XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+      ComposedChart
+    } = Recharts;
+
+    const nestsByYear = [
+      { year: 2004, count: 7 },
+      { year: 2005, count: 11 },
+      { year: 2006, count: 30 },
+      { year: 2007, count: 205 },
+      { year: 2008, count: 19 },
+      { year: 2009, count: 50 },
+      { year: 2010, count: 72 },
+      { year: 2011, count: 38 },
+      { year: 2012, count: 61 },
+      { year: 2013, count: 47 },
+      { year: 2014, count: 46 },
+      { year: 2017, count: 6 },
+      { year: 2018, count: 9 },
+      { year: 2019, count: 9 },
+      { year: 2020, count: 6 },
+      { year: 2021, count: 6 },
+      { year: 2022, count: 29 },
+      { year: 2023, count: 28 },
+      { year: 2024, count: 9 }
+    ];
+    
+    const nestsByMonth = [
+      { month: 'Jan', index: 0, count: 2 },
+      { month: 'Feb', index: 1, count: 3 },
+      { month: 'Mar', index: 2, count: 36 },
+      { month: 'Apr', index: 3, count: 203 },
+      { month: 'May', index: 4, count: 193 },
+      { month: 'Jun', index: 5, count: 116 },
+      { month: 'Jul', index: 6, count: 32 },
+      { month: 'Aug', index: 7, count: 10 },
+      { month: 'Sep', index: 8, count: 10 },
+      { month: 'Oct', index: 9, count: 3 },
+      { month: 'Nov', index: 10, count: 2 },
+      { month: 'Dec', index: 11, count: 2 }
+    ];
+    
+    const timeDistribution = [
+      { name: 'Night (00:00-05:59)', count: 25 },
+      { name: 'Morning (06:00-11:59)', count: 25 },
+      { name: 'Afternoon (12:00-17:59)', count: 277 },
+      { name: 'Evening (18:00-23:59)', count: 261 }
+    ];
+    
+    const sizeDistribution = [
+      { range: '120-130', count: 5 },
+      { range: '130-140', count: 13 },
+      { range: '140-150', count: 98 },
+      { range: '150-160', count: 115 },
+      { range: '160-170', count: 38 },
+      { range: '170-180', count: 6 },
+      { range: '180-190', count: 3 },
+      { range: '190-200', count: 3 },
+      { range: '200-210', count: 2 }
+    ];
+
+    const tagData = {
+      totalTagged: 44,
+      uniqueTags: 54,
+      replacementRate: '23%'
+    };
+
+    function Dashboard() {
+      return (
+        <div className="p-4 bg-blue-50">
+          <h1 className="text-2xl font-bold mb-6 text-center text-blue-800">Leatherback Sea Turtle Dashboard</h1>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            {/* Quick Facts Card */}
+            <div className="bg-white p-4 rounded-lg shadow">
+              <h2 className="text-lg font-semibold mb-4 text-blue-800">Leatherback Quick Facts</h2>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="border rounded p-3 bg-blue-100">
+                  <h3 className="font-medium">Total Records</h3>
+                  <p className="text-2xl font-bold">588</p>
+                </div>
+                <div className="border rounded p-3 bg-blue-100">
+                  <h3 className="font-medium">Average Size</h3>
+                  <p className="text-2xl font-bold">152.5 cm</p>
+                </div>
+                <div className="border rounded p-3 bg-blue-100">
+                  <h3 className="font-medium">Peak Nesting</h3>
+                  <p className="text-2xl font-bold">April/May</p>
+                </div>
+                <div className="border rounded p-3 bg-blue-100">
+                  <h3 className="font-medium">Confirmed Nests</h3>
+                  <p className="text-2xl font-bold">555</p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Time of Day Distribution */}
+            <div className="bg-white p-4 rounded-lg shadow">
+              <h2 className="text-lg font-semibold mb-2 text-blue-800">Activity by Time of Day</h2>
+              <div className="chart-container">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={timeDistribution}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="count" fill="#2E86C1" name="Number of Sightings" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 gap-6 mb-6">
+            {/* Nests by Year */}
+            <div className="bg-white p-4 rounded-lg shadow">
+              <h2 className="text-lg font-semibold mb-2 text-blue-800">Leatherback Nests by Year</h2>
+              <div className="chart-container">
+                <ResponsiveContainer width="100%" height="100%">
+                  <ComposedChart data={nestsByYear}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="year" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="count" fill="#2E86C1" name="Number of Nests" />
+                    <Line type="monotone" dataKey="count" stroke="#FF7300" name="Trend" />
+                  </ComposedChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            {/* Nests by Month */}
+            <div className="bg-white p-4 rounded-lg shadow">
+              <h2 className="text-lg font-semibold mb-2 text-blue-800">Nests by Month</h2>
+              <div className="chart-container">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={nestsByMonth}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="count" fill="#2E86C1" name="Number of Nests" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+            
+            {/* Size Distribution */}
+            <div className="bg-white p-4 rounded-lg shadow">
+              <h2 className="text-lg font-semibold mb-2 text-blue-800">Carapace Length Distribution (CCL)</h2>
+              <div className="chart-container">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={sizeDistribution}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="range" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="count" fill="#2E86C1" name="Number of Turtles" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+          
+          {/* Tag Information */}
+          <div className="bg-white p-4 rounded-lg shadow mb-6">
+            <h2 className="text-lg font-semibold mb-4 text-blue-800">Tagging Information</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="border rounded p-4 bg-blue-100">
+                <h3 className="font-medium">Adopted Leatherbacks</h3>
+                <p className="text-2xl font-bold">{tagData.totalTagged}</p>
+              </div>
+              <div className="border rounded p-4 bg-blue-100">
+                <h3 className="font-medium">Unique Tags</h3>
+                <p className="text-2xl font-bold">{tagData.uniqueTags}</p>
+              </div>
+              <div className="border rounded p-4 bg-blue-100">
+                <h3 className="font-medium">Tag Replacement Rate</h3>
+                <p className="text-2xl font-bold">{tagData.replacementRate}</p>
+              </div>
+            </div>
+            <div className="mt-4">
+              <h3 className="font-medium mb-2">Tag Series Information</h3>
+              <ul className="list-disc pl-5">
+                <li>Primary tag series: WC (e.g., WC23023, WC17811)</li>
+                <li>Most tags placed on rear flippers (e.g., LR, RR)</li>
+                <li>Several turtles have had tag replacements over monitoring periods</li>
+              </ul>
+            </div>
+          </div>
+          
+          {/* Key Insights */}
+          <div className="bg-white p-4 rounded-lg shadow">
+            <h2 className="text-lg font-semibold mb-2 text-blue-800">Key Insights</h2>
+            <ul className="list-disc pl-5">
+              <li>Peak nesting season is April-May, with significant activity through June</li>
+              <li>Most leatherback activity recorded in the afternoon (12:00-17:59) and evening (18:00-23:59)</li>
+              <li>The majority of leatherbacks have a carapace length between 140-160 cm</li>
+              <li>2007 was an exceptional year with 205 recorded leatherback nests</li>
+              <li>Recent years (2022-2023) have shown a moderate increase in nesting activity compared to 2017-2021</li>
+            </ul>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<Dashboard />, document.getElementById('root'));
+  </script>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+</body>
+</html>
