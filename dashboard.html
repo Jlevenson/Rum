@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rosalie Bay Distillery - Analytics Dashboard</title>
+    <style>
+        :root {
+            --primary: #2a5555;
+            --primary-light: #3d7a7a;
+            --secondary: #a1d9d0;
+            --accent: #be1e2d;
+            --light: #f5f5f5;
+            --dark: #333;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: var(--light);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+        
+        .card {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .card h2 {
+            color: var(--primary);
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .card h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 20px;
+        }
+        
+        @media (min-width: 768px) {
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .grid-3 {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            margin-right: 5px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-radius: 5px 5px 0 0;
+            border: 1px solid transparent;
+        }
+        
+        .tab:hover {
+            background-color: rgba(42, 85, 85, 0.1);
+        }
+        
+        .tab.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .metric-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .metric {
+            text-align: center;
+            padding: 15px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--primary);
+        }
+        
+        .metric-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 5px 0;
+        }
+        
+        .metric-label {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .metric-trend {
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        .trend-up {
+            color: var(--success);
+        }
+        
+        .trend-down {
+            color: var(--danger);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .badge-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .badge-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .badge-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .badge-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+            background-color: transparent;
+        }
+        
+        th, td {
+            padding: 0.75rem;
+            vertical-align: top;
+            border-top: 1px solid #dee2e6;
+            text-align: left;
+        }
+        
+        thead th {
+            vertical-align: bottom;
+            border-bottom: 2px solid #dee2e6;
+            background-color: #f8f9fa;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .highlight-row {
+            background-color: rgba(42, 85, 85, 0.1) !important;
+            font-weight: 500;
+        }
+        
+        .scrollable-table {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+        }
+        
+        .progress {
+            height: 20px;
+            overflow: hidden;
+            background-color: #e9ecef;
+            border-radius: 0.25rem;
+        }
+        
+        .progress-bar {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow: hidden;
+            color: #fff;
+            text-align: center;
+            white-space: nowrap;
+            background-color: var(--primary);
+            transition: width 0.6s ease;
+            height: 100%;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .chart-select {
+            margin-bottom: 15px;
+        }
+        
+        .chart-select select {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #ced4da;
+            background-color: white;
+            min-width: 200px;
+        }
+        
+        .info-box {
+            background-color: #e6f7f5;
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .info-box h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        
+        .info-list {
+            list-style-type: disc;
+            padding-left: 20px;
+            margin-bottom: 0;
+        }
+        
+        .info-list li {
+            margin-bottom: 5px;
+        }
+        
+        .info-list li:last-child {
+            margin-bottom: 0;
+        }
+        
+        .dashboard-footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            font-size: 0.9em;
+            color: #666;
+            border-top: 1px solid #ddd;
+        }
+        
+        /* Spirit Run Analysis */
+        .run-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .run-btn {
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid #ced4da;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .run-btn:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .run-btn.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        /* Financial metrics */
+        .financial-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .financial-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .financial-card h3 {
+            margin-top: 0;
+            font-size: 16px;
+            color: #555;
+        }
+        
+        .financial-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+        
+        .price-comparison {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 30px;
+        }
+        
+        .price-column {
+            text-align: center;
+            width: 100px;
+        }
+        
+        .price-bar {
+            width: 60px;
+            margin: 0 auto;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .price-fill {
+            width: 100%;
+            background-color: var(--primary);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+        
+        .price-label {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        
+        .price-value {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .gap-indicator {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #dc3545;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        
+        /* Fermentation Heatmap */
+        .heatmap-container {
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+        
+        .heatmap-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        
+        .heatmap-table th,
+        .heatmap-table td {
+            padding: 4px;
+            text-align: center;
+            width: 40px;
+            height: 30px;
+        }
+        
+        .heatmap-table th {
+            background-color: #f2f2f2;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .heatmap-table tr th:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 20;
+            text-align: right;
+            width: 80px;
+            background-color: #f2f2f2;
+        }
+        
+        .sg-1070 { background-color: #67000d; color: white; }
+        .sg-1065 { background-color: #a50f15; color: white; }
+        .sg-1060 { background-color: #cb181d; color: white; }
+        .sg-1055 { background-color: #ef3b2c; color: white; }
+        .sg-1050 { background-color: #fb6a4a; color: white; }
+        .sg-1045 { background-color: #fc9272; }
+        .sg-1040 { background-color: #fcbba1; }
+        .sg-1035 { background-color: #fee0d2; }
+        .sg-1030 { background-color: #fee5d9; }
+        .sg-1025 { background-color: #fff5f0; }
+        .sg-1020 { background-color: #f0f9e8; }
+        .sg-1015 { background-color: #e5f5e0; }
+        .sg-1010 { background-color: #c7e9c0; }
+        .sg-1005 { background-color: #a1d99b; }
+        .sg-1000 { background-color: #74c476; }
+        
+        /* Farmer Data Visualization */
+        .top-farmers {
+            margin-bottom: 20px;
+        }
+        
+        .farmer-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .farmer-name {
+            width: 150px;
+            text-align: right;
+            padding-right: 10px;
+            font-size: 14px;
+        }
+        
+        .farmer-bar-outer {
+            flex: 1;
+            height: 20px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .farmer-bar-inner {
+            height: 100%;
+            border-radius: 4px;
+        }
+        
+        .farmer-value {
+            padding-left: 10px;
+            font-size: 14px;
+            width: 80px;
+        }
+        
+        .map-container {
+            border: 1px solid #ddd;
+            height: 300px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            background-color: #eaf0f7;
+        }
+        
+        .map-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #999;
+        }
+
+        .placeholder-chart {
+            height: 300px;
+            background-color: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            color: #777;
+            border: 1px dashed #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Rosalie Bay Distillery</h1>
+            <p>Production Analytics Dashboard - April 19, 2025</p>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="dashboard">Dashboard</div>
+            <div class="tab" data-tab="fermentation">Fermentation</div>
+            <div class="tab" data-tab="spirit-runs">Spirit Runs</div>
+            <div class="tab" data-tab="production">Production</div>
+            <div class="tab" data-tab="farmers">Farmers & Supply</div>
+            <div class="tab" data-tab="financial">Financial</div>
+        </div>
+        
+        <!-- Dashboard Overview Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="metric-container">
+                <div class="metric">
+                    <div class="metric-label">Current Batches</div>
+                    <div class="metric-value">1</div>
+                    <div class="metric-trend">M001 (Day 3)</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Rum Sold</div>
+                    <div class="metric-value">88</div>
+                    <div class="metric-trend">Bottles (as of Apr 15, 2025)</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Next Barrel Fill</div>
+                    <div class="metric-value">May 19</div>
+                    <div class="metric-trend">30 days remaining</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Production Start</div>
+                    <div class="metric-value">Apr 16</div>
+                    <div class="metric-trend">First fermentation (M001)</div>
+                </div>
+            </div>
+            
+            <div class="grid">
+                <div class="card">
+                    <h2>Current Production Status</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Batch</th>
+                                <th>Type</th>
+                                <th>Start Date</th>
+                                <th>Stage</th>
+                                <th>Progress</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="highlight-row">
+                                <td>M001</td>
+                                <td>Molasses Fermentation</td>
+                                <td>Apr 16, 2025</td>
+                                <td>Active Fermentation</td>
+                                <td>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: 43%;">Day 3</div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h3 style="margin-top: 20px;">Current Fermentation (M001)</h3>
+                    <div style="margin-top: 10px; font-size: 14px; margin-bottom: 15px;">
+                        <strong>Initial Data:</strong> 1,400 gallons, 2,800g yeast, 2,646g first nutrient dose, 1,596g second nutrient dose
+                    </div>
+                    <div class="grid">
+                        <div>
+                            <h4 style="text-align: center; color: var(--primary);">Specific Gravity</h4>
+                            <div>
+                                <svg width="500" height="250" xmlns="http://www.w3.org/2000/svg">
+                                    <g transform="translate(60, 20)">
+                                      <!-- Y-axis -->
+                                      <line x1="0" y1="0" x2="0" y2="180" stroke="black" />
+                                      
+                                      <!-- X-axis -->
+                                      <line x1="0" y1="180" x2="410" y2="180" stroke="black" />
+                                      
+                                      <!-- Y-axis ticks and labels -->
+                                      <line x1="-5" y1="180" x2="0" y2="180" stroke="black" />
+                                      <text x="-10" y="185" text-anchor="end" font-size="12">1.055</text>
+                                    
+                                      <line x1="-5" y1="144" x2="0" y2="144" stroke="black" />
+                                      <text x="-10" y="149" text-anchor="end" font-size="12">1.061</text>
+                                    
+                                      <line x1="-5" y1="108" x2="0" y2="108" stroke="black" />
+                                      <text x="-10" y="113" text-anchor="end" font-size="12">1.067</text>
+                                    
+                                      <line x1="-5" y1="72" x2="0" y2="72" stroke="black" />
+                                      <text x="-10" y="77" text-anchor="end" font-size="12">1.073</text>
+                                    
+                                      <line x1="-5" y1="36" x2="0" y2="36" stroke="black" />
+                                      <text x="-10" y="41" text-anchor="end" font-size="12">1.079</text>
+                                    
+                                      <line x1="-5" y1="0" x2="0" y2="0" stroke="black" />
+                                      <text x="-10" y="5" text-anchor="end" font-size="12">1.085</text>
+                                      
+                                      <!-- X-axis labels -->
+                                      <line x1="0" y1="180" x2="0" y2="185" stroke="black" />
+                                      <text x="0" y="200" text-anchor="middle" font-size="12" transform="rotate(45, 0, 200)">Apr 17, 14:30</text>
+                                    
+                                      <line x1="136.66666666666666" y1="180" x2="136.66666666666666" y2="185" stroke="black" />
+                                      <text x="136.66666666666666" y="200" text-anchor="middle" font-size="12" transform="rotate(45, 136.66666666666666, 200)">Apr 18, 8:54</text>
+                                    
+                                      <line x1="273.3333333333333" y1="180" x2="273.3333333333333" y2="185" stroke="black" />
+                                      <text x="273.3333333333333" y="200" text-anchor="middle" font-size="12" transform="rotate(45, 273.3333333333333, 200)">Apr 18, 17:38</text>
+                                    
+                                      <line x1="410" y1="180" x2="410" y2="185" stroke="black" />
+                                      <text x="410" y="200" text-anchor="middle" font-size="12" transform="rotate(45, 410, 200)">Apr 19, 7:27</text>
+                                      
+                                      <!-- Data points and line -->
+                                      <polyline points="0,41.99999999999932 136.66666666666666,120 273.3333333333333,120 410,149.99999999999932 " fill="none" stroke="#2a5555" stroke-width="2" />
+                                      <circle cx="0" cy="41.99999999999932" r="4" fill="#2a5555" />
+                                      <text x="0" y="31.999999999999318" text-anchor="middle" font-size="12">1.070</text>
+                                      <circle cx="136.66666666666666" cy="120" r="4" fill="#2a5555" />
+                                      <text x="136.66666666666666" y="110" text-anchor="middle" font-size="12">1.065</text>
+                                      <circle cx="273.3333333333333" cy="120" r="4" fill="#2a5555" />
+                                      <text x="273.3333333333333" y="110" text-anchor="middle" font-size="12">1.065</text>
+                                      <circle cx="410" cy="149.99999999999932" r="4" fill="#2a5555" />
+                                      <text x="410" y="139.99999999999932" text-anchor="middle" font-size="12">1.060</text>
+                                      
+                                      <!-- Title -->
+                                      <text x="205" y="-5" text-anchor="middle" font-weight="bold">Specific Gravity</text>
+                                    </g>
+                                </svg>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="text-align: center; color: var(--primary);">pH</h4>
+                            <div>
+                                <svg width="500" height="250" xmlns="http://www.w3.org/2000/svg">
+                                    <g transform="translate(60, 20)">
+                                      <!-- Y-axis -->
+                                      <line x1="0" y1="0" x2="0" y2="180" stroke="black" />
+                                      
+                                      <!-- X-axis -->
+                                      <line x1="0" y1="180" x2="410" y2="180" stroke="black" />
+                                      
+                                      <!-- Y-axis ticks and labels -->
+                                      <line x1="-5" y1="180" x2="0" y2="180" stroke="black" />
+                                      <text x="-10" y="185" text-anchor="end" font-size="12">4.500</text>
+                                    
+                                      <line x1="-5" y1="144" x2="0" y2="144" stroke="black" />
+                                      <text x="-10" y="149" text-anchor="end" font-size="12">4.760</text>
+                                    
+                                      <line x1="-5" y1="108" x2="0" y2="108" stroke="black" />
+                                      <text x="-10" y="113" text-anchor="end" font-size="12">5.020</text>
+                                    
+                                      <line x1="-5" y1="72" x2="0" y2="72" stroke="black" />
+                                      <text x="-10" y="77" text-anchor="end" font-size="12">5.280</text>
+                                    
+                                      <line x1="-5" y1="36" x2="0" y2="36" stroke="black" />
+                                      <text x="-10" y="41" text-anchor="end" font-size="12">5.540</text>
+                                    
+                                      <line x1="-5" y1="0" x2="0" y2="0" stroke="black" />
+                                      <text x="-10" y="5" text-anchor="end" font-size="12">5.800</text>
+                                      
+                                      <!-- X-axis labels -->
+                                      <line x1="0" y1="180" x2="0" y2="185" stroke="black" />
+                                      <text x="0" y="200" text-anchor="middle" font-size="12" transform="rotate(45, 0, 200)">Apr 17, 14:30</text>
+                                    
+                                      <line x1="136.66666666666666" y1="180" x2="136.66666666666666" y2="185" stroke="black" />
+                                      <text x="136.66666666666666" y="200" text-anchor="middle" font-size="12" transform="rotate(45, 136.66666666666666, 200)">Apr 18, 8:54</text>
+                                    
+                                      <line x1="273.3333333333333" y1="180" x2="273.3333333333333" y2="185" stroke="black" />
+                                      <text x="273.3333333333333" y="200" text-anchor="middle" font-size="12" transform="rotate(45, 273.3333333333333, 200)">Apr 18, 17:38</text>
+                                    
+                                      <line x1="410" y1="180" x2="410" y2="185" stroke="black" />
+                                      <text x="410" y="200" text-anchor="middle" font-size="12" transform="rotate(45, 410, 200)">Apr 19, 7:27</text>
+                                      
+                                      <!-- Data points and line -->
+                                      <polyline points="0,71.99999999999994 136.66666666666666,162 273.3333333333333,38.7692307692308 410,33.23076923076928 " fill="none" stroke="#be1e2d" stroke-width="2" />
+                                      <circle cx="0" cy="71.99999999999994" r="4" fill="#be1e2d" />
+                                      <text x="0" y="61.99999999999994" text-anchor="middle" font-size="12">5.28</text>
+                                      <circle cx="136.66666666666666" cy="162" r="4" fill="#be1e2d" />
+                                      <text x="136.66666666666666" y="152" text-anchor="middle" font-size="12">4.63</text>
+                                      <circle cx="273.3333333333333" cy="38.7692307692308" r="4" fill="#be1e2d" />
+                                      <text x="273.3333333333333" y="28.769230769230802" text-anchor="middle" font-size="12">5.52</text>
+                                      <circle cx="410" cy="33.23076923076928" r="4" fill="#be1e2d" />
+                                      <text x="410" y="23.230769230769283" text-anchor="middle" font-size="12">5.56</text>
+                                      
+                                      <!-- Title -->
+                                      <text x="205" y="-5" text-anchor="middle" font-weight="bold">pH</text>
+                                    </g>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin-top: 30px;">Comparison with Historical Fermentations</h3>
+                    <div style="text-align: center;">
+                      <svg width="600" height="350" xmlns="http://www.w3.org/2000/svg">
+                          <defs>
+                            <pattern id="diagonalHatch" patternUnits="userSpaceOnUse" width="4" height="4">
+                              <path d="M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2" style="stroke:#2a5555; stroke-width:0.5" />
+                            </pattern>
+                          </defs>
+                          <g transform="translate(70, 30)">
+                            <!-- Title -->
+                            <text x="230" y="-10" text-anchor="middle" font-weight="bold" font-size="14">M001 vs Historical Fermentation Performance</text>
+                            
+                            <!-- Y-axis -->
+                            <line x1="0" y1="0" x2="0" y2="260" stroke="black" stroke-width="1" />
+                            
+                            <!-- X-axis -->
+                            <line x1="0" y1="260" x2="460" y2="260" stroke="black" stroke-width="1" />
+                            
+                            <!-- Y-axis title -->
+                            <text x="-40" y="130" text-anchor="middle" transform="rotate(-90, -40, 130)" font-size="12">Specific Gravity</text>
+                            
+                            <!-- X-axis title -->
+                            <text x="230" y="300" text-anchor="middle" font-size="12">Hours Since Yeast Addition</text>
+                            
+                            <!-- Y-axis ticks and labels -->
+                            
+                            <line x1="-5" y1="260" x2="0" y2="260" stroke="black" />
+                            <text x="-10" y="264" text-anchor="end" font-size="10">1.005</text>
+                          
+                            <line x1="-5" y1="227.5" x2="0" y2="227.5" stroke="black" />
+                            <text x="-10" y="231.5" text-anchor="end" font-size="10">1.015</text>
+                          
+                            <line x1="-5" y1="195" x2="0" y2="195" stroke="black" />
+                            <text x="-10" y="199" text-anchor="end" font-size="10">1.025</text>
+                          
+                            <line x1="-5" y1="162.5" x2="0" y2="162.5" stroke="black" />
+                            <text x="-10" y="166.5" text-anchor="end" font-size="10">1.034</text>
+                          
+                            <line x1="-5" y1="130" x2="0" y2="130" stroke="black" />
+                            <text x="-10" y="134" text-anchor="end" font-size="10">1.044</text>
+                          
+                            <line x1="-5" y1="97.5" x2="0" y2="97.5" stroke="black" />
+                            <text x="-10" y="101.5" text-anchor="end" font-size="10">1.054</text>
+                          
+                            <line x1="-5" y1="65" x2="0" y2="65" stroke="black" />
+                            <text x="-10" y="69" text-anchor="end" font-size="10">1.063</text>
+                          
+                            <line x1="-5" y1="32.5" x2="0" y2="32.5" stroke="black" />
+                            <text x="-10" y="36.5" text-anchor="end" font-size="10">1.073</text>
+                          
+                            <line x1="-5" y1="0" x2="0" y2="0" stroke="black" />
+                            <text x="-10" y="4" text-anchor="end" font-size="10">1.083</text>
+                          
+                            
+                            <!-- X-axis ticks and labels with 24-hour increments -->
+                              <line x1="0" y1="260" x2="0" y2="265" stroke="black" />
+                              <text x="0" y="280" text-anchor="middle" font-size="10">0h</text>
+                              
+                              <line x1="83.63636363636364" y1="260" x2="83.63636363636364" y2="265" stroke="black" />
+                              <text x="83.63636363636364" y="280" text-anchor="middle" font-size="10">24h</text>
+                              
+                              <line x1="167.27272727272728" y1="260" x2="167.27272727272728" y2="265" stroke="black" />
+                              <text x="167.27272727272728" y="280" text-anchor="middle" font-size="10">48h</text>
+                              
+                              <line x1="250.90909090909088" y1="260" x2="250.90909090909088" y2="265" stroke="black" />
+                              <text x="250.90909090909088" y="280" text-anchor="middle" font-size="10">72h</text>
+                              
+                              <line x1="334.54545454545456" y1="260" x2="334.54545454545456" y2="265" stroke="black" />
+                              <text x="334.54545454545456" y="280" text-anchor="middle" font-size="10">96h</text>
+                              
+                              <line x1="418.1818181818182" y1="260" x2="418.1818181818182" y2="265" stroke="black" />
+                              <text x="418.1818181818182" y="280" text-anchor="middle" font-size="10">120h</text>
+                              
+                              <line x1="460" y1="260" x2="460" y2="265" stroke="black" />
+                              <text x="460" y="280" text-anchor="middle" font-size="10">132h</text>
+                            
+                            
+                            <!-- p10-p90 Range area -->
+                            <path d="M0,60.00000000000017 L41.81818181818182,69.99999999999983 L83.63636363636364,89.99999999999989 L125.45454545454544,133.3333333333337 L167.27272727272728,150.00000000000006 L209.0909090909091,176.6666666666668 L250.90909090909088,193.33333333333388 L292.72727272727275,193.33333333333388 L334.54545454545456,193.33333333333388 L376.3636363636364,196.66666666666686 L418.1818181818182,196.66666666666686 L460,210.00000000000023 L460,226.6666666666673 L418.1818181818182,226.6666666666673 L376.3636363636364,243.33333333333366 L334.54545454545456,243.33333333333366 L292.72727272727275,243.33333333333366 L250.90909090909088,233.333333333334 L209.0909090909091,226.6666666666673 L167.27272727272728,226.6666666666673 L125.45454545454544,213.33333333333394 L83.63636363636364,193.33333333333388 L41.81818181818182,160.00000000000045 L0,120.00000000000034 Z" 
+                                  fill="rgba(42, 85, 85, 0.1)" />
+                            
+                            <!-- Average SG Line -->
+                            <path d="M0,89.24731182795594 L41.81818181818182,118.33333333333385 L83.63636363636364,148.7878787878789 L125.45454545454544,179.79797979798093 L167.27272727272728,192.82828282828308 L209.0909090909091,204.64646464646484 L250.90909090909088,212.29166666666674 L292.72727272727275,215.4022988505737 L334.54545454545456,214.24242424242388 L376.3636363636364,213.75000000000037 L418.1818181818182,210.00000000000023 L460,215.61403508772008" stroke="#2a5555" stroke-width="2" fill="none" />
+                            
+                            <!-- Remove the solid line for M001 past the measured data points -->
+                            <path d="M0,48.00000000000017 L62.72727272727272,60.00000000000017 L94.0909090909091,60.00000000000017 L142.87878787878788,76.66666666666652" stroke="#be1e2d" stroke-width="2" fill="none" />
+                            
+                            <!-- Add a dashed line for the projected portion -->
+                            <path d="M142.87878787878788,76.66666666666652 L167.27272727272728,86.91056910569094 L209.0909090909091,104.4715447154471 L250.90909090909088,122.03252032520322 L292.72727272727275,139.59349593495938 L334.54545454545456,157.15447154471553 L376.3636363636364,174.7154471544717 L418.1818181818182,192.27642276422782 L460,209.83739837398397" stroke="#be1e2d" stroke-width="2" fill="none" stroke-dasharray="4,2" />
+                            
+                            <!-- CORRECTED M001 Data Points -->
+                            <circle cx="0" cy="48.00000000000017" r="5" fill="#be1e2d" /><text x="0" y="40.00000000000017" text-anchor="middle" font-size="11">1.070</text><circle cx="62.72727272727272" cy="60.00000000000017" r="5" fill="#be1e2d" /><text x="62.72727272727272" y="52.00000000000017" text-anchor="middle" font-size="11">1.065</text><circle cx="94.0909090909091" cy="60.00000000000017" r="5" fill="#be1e2d" /><text x="94.0909090909091" y="52.00000000000017" text-anchor="middle" font-size="11">1.065</text><circle cx="142.87878787878788" cy="76.66666666666652" r="5" fill="#be1e2d" /><text x="142.87878787878788" y="68.66666666666652" text-anchor="middle" font-size="11">1.060</text>
+                            
+                            <!-- Legend -->
+                            <g transform="translate(300, 10)">
+                              <!-- Historical Average -->
+                              <line x1="0" y1="7" x2="20" y2="7" stroke="#2a5555" stroke-width="2" />
+                              <text x="25" y="10" font-size="11">Historical Average</text>
+                              
+                              <!-- 10-90 Percentile Range -->
+                              <rect x="0" y="22" width="20" height="10" fill="rgba(42, 85, 85, 0.1)" />
+                              <text x="25" y="30" font-size="11">10-90 Percentile Range</text>
+                              
+                              <!-- M001 Actual -->
+                              <line x1="0" y1="47" x2="20" y2="47" stroke="#be1e2d" stroke-width="2" />
+                              <text x="25" y="50" font-size="11">M001 (Actual)</text>
+                              
+                              <!-- M001 Projected -->
+                              <line x1="0" y1="67" x2="20" y2="67" stroke="#be1e2d" stroke-width="2" stroke-dasharray="4,2" />
+                              <text x="25" y="70" font-size="11">M001 (Projected)</text>
+                            </g>
+                          </g>
+                        </svg>
+                    </div>
+                    
+                    <div class="info-box" style="margin-top: 20px;">
+                      <h3>Fermentation Analysis</h3>
+                      <ul class="info-list">
+                        <li><strong>Initial SG:</strong> 1.070 (+14 points vs. historical average)</li>
+                        <li><strong>Attenuation Rate:</strong> 0.24 points/hour (32% slower than average)</li>
+                        <li><strong>Current Status:</strong> SG 1.060 at 41 hours</li>
+                        <li><strong>Projected Completion:</strong> ~144 hours (6 days) vs. historical average of 96-120 hours</li>
+                        <li><strong>Assessment:</strong> M001 is progressing more slowly than historical averages and started at a higher gravity, which will likely result in a longer fermentation time.</li>
+                      </ul>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>Upcoming Schedule</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Activity</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Apr 21, 2025</td>
+                                <td>Holiday</td>
+                                <td>Easter Monday - 1hr monitoring only</td>
+                            </tr>
+                            <tr>
+                                <td>Apr 23, 2025</td>
+                                <td>Fermentation End</td>
+                                <td>M001 expected completion</td>
+                            </tr>
+                            <tr>
+                                <td>Apr 28, 2025</td>
+                                <td>Multiple Activities</td>
+                                <td>M002 Start, M001 Stripping Begin</td>
+                            </tr>
+                            <tr>
+                                <td>May 1, 2025</td>
+                                <td>Holiday</td>
+                                <td>Labour Day - 1hr monitoring only</td>
+                            </tr>
+                            <tr>
+                                <td>May 5, 2025</td>
+                                <td>Multiple Activities</td>
+                                <td>M003 Start, M002 Stripping Begin</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>2025 Production Targets</h2>
+                <div class="grid">
+                    <div>
+                        <div class="placeholder-chart">
+                            <p>Production Targets Chart</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>Key Objectives</h3>
+                        <ul class="info-list">
+                            <li>Sell <strong>2,000 bottles</strong> of rum by year end (4.4% of annual target reached)</li>
+                            <li>Open for <strong>public tours by September 1</strong> (wall paneling, uniforms, staff training, 7-day coverage with reservation system)</li>
+                            <li>Complete <strong>22-27 fermentations</strong> by year end</li>
+                            <li>Fill <strong>5 Calvados barrels</strong> (May-August 2025)</li>
+                            <li>Complete green road construction to improve cane transportation</li>
+                            <li>Implement cooling system for summer fermentations</li>
+                            <li>Install barrel rack construction (May 15-20)</li>
+                        </ul>
+                        
+                        <div class="info-box" style="margin-top: 20px;">
+                            <h3>Queen's Share Production</h3>
+                            <p>Next Queen's Share distillation scheduled for June 2025. Previous runs (April 10 & 15, 2025) yielded ~50% higher volume with superior ABV profile.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Fermentation Tab -->
+        <div id="fermentation" class="tab-content">
+            <div class="metric-container">
+                <div class="metric">
+                    <div class="metric-label">Total Fermentations</div>
+                    <div class="metric-value">33</div>
+                    <div class="metric-trend">Historical Data</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Average Duration</div>
+                    <div class="metric-value">4.4 days</div>
+                    <div class="metric-trend">To reach 1.015 SG</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Total Nutrient</div>
+                    <div class="metric-value">1.3 g/gal</div>
+                    <div class="metric-trend">Standard protocol</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Current pH</div>
+                    <div class="metric-value">5.56</div>
+                    <div class="metric-trend">As of Apr 19, 2025</div>
+                </div>
+            </div>
+            
+            <div class="grid">
+                <div class="card">
+                    <h2>Active Fermentations</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Batch</th>
+                                <th>Start Date</th>
+                                <th>Current Day</th>
+                                <th>Current SG</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="highlight-row">
+                                <td>M001</td>
+                                <td>Apr 16, 2025</td>
+                                <td>Day 3</td>
+                                <td>1.060</td>
+                                <td>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: 43%;">43% Complete</div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="placeholder-chart" style="margin-top: 20px;">
+                        <p>Current Fermentation Progress Chart</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2>Fermentation Parameters</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Standard Value</th>
+                                <th>Acceptable Range</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Initial Temperature</td>
+                                <td>28°C</td>
+                                <td>26-30°C</td>
+                            </tr>
+                            <tr>
+                                <td>Initial pH</td>
+                                <td>5.2</td>
+                                <td>5.0-5.5</td>
+                            </tr>
+                            <tr>
+                                <td>Initial Specific Gravity</td>
+                                <td>1.060</td>
+                                <td>1.050-1.070</td>
+                            </tr>
+                            <tr>
+                                <td>Yeast Pitch Rate</td>
+                                <td>2g/gal</td>
+                                <td>1.5-2.5g/gal</td>
+                            </tr>
+                            <tr>
+                                <td>Initial Nutrient Addition</td>
+                                <td>1.0g/gal</td>
+                                <td>0.8-1.2g/gal</td>
+                            </tr>
+                            <tr>
+                                <td>48hr Nutrient Addition</td>
+                                <td>0.3g/gal</td>
+                                <td>0.2-0.4g/gal</td>
+                            </tr>
+                            <tr>
+                                <td>Final Specific Gravity</td>
+                                <td>1.000</td>
+                                <td>0.998-1.002</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Fermentation Performance</h2>
+                <div class="chart-select">
+                    <label for="fermentation-metric">Select metric:</label>
+                    <select id="fermentation-metric">
+                        <option value="duration">Fermentation Duration</option>
+                        <option value="final-sg">Final Specific Gravity</option>
+                        <option value="avg-drop">Average SG Drop Per Day</option>
+                    </select>
+                </div>
+                <div class="placeholder-chart">
+                    <p>Fermentation Performance Chart</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Fermentation Heatmap</h2>
+                <p>Specific gravity readings for all fermentations by hour since yeast addition. Color intensity indicates SG value (darker red = higher SG, darker green = lower SG).</p>
+                <div class="heatmap-container">
+                    <table class="heatmap-table">
+                        <tr>
+                            <th>Hours</th>
+                            <th>F001</th>
+                            <th>F002</th>
+                            <th>F003</th>
+                            <th>F004</th>
+                            <th>F005</th>
+                            <th>F006</th>
+                            <th>F007</th>
+                            <th>F008</th>
+                            <th>F009</th>
+                            <th>F010</th>
+                        </tr>
+                        <tr>
+                            <th>0</th>
+                            <td class="sg-1065">1.065</td>
+                            <td class="sg-1065">1.065</td>
+                            <td class="sg-1050">1.050</td>
+                            <td class="sg-1060">1.060</td>
+                            <td class="sg-1055">1.056</td>
+                            <td class="sg-1060">1.060</td>
+                            <td class="sg-1065">1.064</td>
+                            <td class="sg-1060">1.061</td>
+                            <td class="sg-1070">1.070</td>
+                            <td class="sg-1065">1.063</td>
+                        </tr>
+                        <tr>
+                            <th>24</th>
+                            <td class="sg-1050">1.050</td>
+                            <td class="sg-1060">1.060</td>
+                            <td class="sg-1055">1.056</td>
+                            <td class="sg-1040">1.040</td>
+                            <td class="sg-1035">1.035</td>
+                            <td class="sg-1050">1.050</td>
+                            <td class="sg-1030">1.032</td>
+                            <td class="sg-1055">1.056</td>
+                            <td class="sg-1050">1.051</td>
+                            <td class="sg-1040">1.040</td>
+                        </tr>
+                        <tr>
+                            <th>48</th>
+                            <td class="sg-1030">1.030</td>
+                            <td class="sg-1040">1.040</td>
+                            <td class="sg-1045">1.045</td>
+                            <td class="sg-1025">1.025</td>
+                            <td class="sg-1020">1.020</td>
+                            <td class="sg-1025">1.025</td>
+                            <td class="sg-1025">1.025</td>
+                            <td class="sg-1035">1.038</td>
+                            <td class="sg-1030">1.030</td>
+                            <td class="sg-1025">1.024</td>
+                        </tr>
+                        <tr>
+                            <th>72</th>
+                            <td class="sg-1020">1.020</td>
+                            <td class="sg-1035">1.034</td>
+                            <td class="sg-1035">1.035</td>
+                            <td class="sg-1020">1.020</td>
+                            <td class="sg-1015">1.015</td>
+                            <td class="sg-1020">1.020</td>
+                            <td class="sg-1025">1.024</td>
+                            <td class="sg-1025">1.024</td>
+                            <td class="sg-1020">1.020</td>
+                            <td class="sg-1030">1.030</td>
+                        </tr>
+                        <tr>
+                            <th>96</th>
+                            <td class="sg-1015">1.015</td>
+                            <td class="sg-1025">1.025</td>
+                            <td class="sg-1035">1.033</td>
+                            <td class="sg-1020">1.020</td>
+                            <td class="sg-1015">1.015</td>
+                            <td class="sg-1020">1.020</td>
+                            <td class="sg-1025">1.024</td>
+                            <td class="sg-1025">1.024</td>
+                            <td class="sg-1025">1.026</td>
+                            <td class="sg-1015">1.019</td>
+                        </tr>
+                        <tr>
+                            <th>120</th>
+                            <td class="sg-1015">1.015</td>
+                            <td class="sg-1020">1.020</td>
+                            <td class="sg-1015">1.015</td>
+                            <td class="sg-1020">1.020</td>
+                            <td class="sg-1015">1.015</td>
+                            <td class="sg-1020">1.020</td>
+                            <td class="sg-1025">1.024</td>
+                            <td class="sg-1025">1.024</td>
+                            <td class="sg-1025">1.023</td>
+                            <td class="sg-1015">1.015</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Process Improvement Insights</h2>
+                <div class="grid">
+                    <div>
+                        <h3>Key Observations</h3>
+                        <ul class="info-list">
+                            <li>Fermentations with initial gravity below 1.050 show more consistent attenuation curves</li>
+                            <li>Second nutrient addition at 48 hours correlates with improved fermentation completion rates</li>
+                            <li>Most fermentations reach terminal gravity (1.015 or below) within 96 hours</li>
+                            <li>Temperature control is a critical factor in fermentation consistency</li>
+                            <li>Batches with higher initial gravity (>1.065) take approximately 20% longer to complete</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Recommendations</h3>
+                        <ul class="info-list">
+                            <li>Maintain initial gravity between 1.055-1.060 for optimal balance between yield and fermentation time</li>
+                            <li>Continue split nutrient additions with 1.0g/gal initially and 0.3g/gal at 48 hours</li>
+                            <li>Implement cooling system for summer fermentations to maintain consistent temperature profile</li>
+                            <li>Standardize initial pitch rate at 2.0g/gal for all fermentations</li>
+                            <li>Schedule stripping runs for 120 hours after yeast pitch for most consistent results</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Spirit Runs Tab -->
+        <div id="spirit-runs" class="tab-content">
+            <div class="metric-container">
+                <div class="metric">
+                    <div class="metric-label">Average Hearts Collection</div>
+                    <div class="metric-value">33.2 gal</div>
+                    <div class="metric-trend">Standard runs</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Average Hearts ABV</div>
+                    <div class="metric-value">73.4%</div>
+                    <div class="metric-trend">Across all runs</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Queen's Share Average</div>
+                    <div class="metric-value">51.1 gal</div>
+                    <div class="metric-trend">+53.9% yield</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Total Spirits Collected</div>
+                    <div class="metric-value">367 gal</div>
+                    <div class="metric-trend">Year to date</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Run Selection</h2>
+                <div class="run-selector">
+                    <button class="run-btn active" data-run="all">All Runs</button>
+                    <button class="run-btn" data-run="standard">Standard Runs</button>
+                    <button class="run-btn" data-run="queens">Queen's Share</button>
+                    <button class="run-btn" data-run="recent">Recent (5)</button>
+                </div>
+                
+                <div class="grid">
+                    <div>
+                        <h3>Volume Collection Over Time</h3>
+                        <div class="placeholder-chart">
+                            <p>Volume Collection Chart</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>ABV Profile Over Time</h3>
+                        <div class="placeholder-chart">
+                            <p>ABV Profile Chart</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Spirit Run Comparison</h2>
+                <div class="placeholder-chart">
+                    <p>Run Comparison Chart</p>
+                </div>
+                
+                <div class="scrollable-table" style
