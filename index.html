@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jake's Data Visualization & AI Projects</title>
+    <title>Farmer Payment Distribution - Rosalie Bay Rum</title>
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -28,8 +28,8 @@
         
         header {
             text-align: center;
-            padding: 40px 20px;
-            margin-bottom: 40px;
+            padding: 30px 20px;
+            margin-bottom: 30px;
             background-color: var(--primary-color);
             color: white;
             border-radius: 8px;
@@ -38,7 +38,7 @@
         
         h1 {
             margin: 0;
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             font-weight: 700;
         }
         
@@ -54,42 +54,68 @@
             opacity: 0.9;
         }
         
-        .project-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            margin-top: 30px;
-        }
-        
-        .project-card {
+        .content {
             background-color: white;
+            padding: 30px;
             border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 1px solid var(--medium-gray);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
         }
         
-        .project-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        
-        .card-header {
-            padding: 15px 20px;
+        .placeholder-chart {
+            width: 100%;
+            height: 400px;
             background-color: var(--light-gray);
-            border-bottom: 1px solid var(--medium-gray);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .placeholder-chart::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                45deg,
+                rgba(0,0,0,0.05),
+                rgba(0,0,0,0.05) 10px,
+                rgba(0,0,0,0.08) 10px,
+                rgba(0,0,0,0.08) 20px
+            );
+        }
+        
+        .placeholder-text {
+            background-color: white;
+            padding: 15px 30px;
+            border-radius: 4px;
             font-weight: bold;
-            color: var(--primary-color);
+            z-index: 2;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
-        .card-content {
+        .insights {
+            background-color: var(--light-gray);
             padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
         }
         
-        .card-content p {
-            color: #666;
-            margin-bottom: 20px;
+        .insights h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+        
+        .insights ul {
+            padding-left: 20px;
+        }
+        
+        .insights li {
+            margin-bottom: 10px;
         }
         
         .btn {
@@ -101,18 +127,11 @@
             text-decoration: none;
             font-weight: medium;
             transition: background-color 0.3s ease;
+            margin-top: 20px;
         }
         
         .btn:hover {
             background-color: #2980b9;
-        }
-        
-        .btn-accent {
-            background-color: var(--accent-color);
-        }
-        
-        .btn-accent:hover {
-            background-color: #d35400;
         }
         
         footer {
@@ -122,194 +141,55 @@
             color: #666;
             border-top: 1px solid #ddd;
         }
-        
-        .section-heading {
-            text-align: center;
-            margin-bottom: 30px;
-            position: relative;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--medium-gray);
-        }
-        
-        .section {
-            margin-bottom: 60px;
-        }
-        
-        .section-description {
-            text-align: center;
-            max-width: 800px;
-            margin: 0 auto 30px;
-            color: #666;
-        }
-        
-        /* Category labels */
-        .category-badge {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-            color: white;
-            margin-right: 5px;
-            margin-bottom: 10px;
-        }
-        
-        .category-business {
-            background-color: var(--secondary-color);
-        }
-        
-        .category-conservation {
-            background-color: #27ae60;
-        }
-        
-        .category-agriculture {
-            background-color: #8e44ad;
-        }
     </style>
 </head>
 <body>
     <header>
-        <h1>Welcome to Jake's GitHub Page</h1>
-        <p class="subtitle">Where I play with data visualization and AI for better decision making and conveying complex information</p>
+        <h1>Farmer Payment Distribution</h1>
+        <p class="subtitle">Distribution of payments to local sugarcane farmers across Dominica</p>
     </header>
     
-    <section class="section">
-        <div class="section-heading">
-            <h2>Business Analytics Visualizations</h2>
-        </div>
-        <p class="section-description">Interactive visualizations that help simplify complex business data for better decision making</p>
+    <div class="content">
+        <h2>Farmer Payment Analysis</h2>
+        <p>This visualization tracks payments made to our network of local sugarcane farmers throughout Dominica. Our data shows the distribution across different villages and individual farmers, highlighting our commitment to fair compensation and supporting local agriculture.</p>
         
-        <div class="project-grid">
-            <div class="project-card">
-                <div class="card-header">
-                    <span class="category-badge category-business">Cost Analysis</span>
-                    Rum Production Economics
-                </div>
-                <div class="card-content">
-                    <h3>Rum Cost vs. Price Gap</h3>
-                    <p>This visualization breaks down our production costs compared to retail and wholesale prices, showing the economic challenges of craft rum production.</p>
-                    <a href="rum-cost-vs-price-gap.html" class="btn">View Visualization</a>
-                </div>
-            </div>
-            
-            <div class="project-card">
-                <div class="card-header">
-                    <span class="category-badge category-business">Production</span>
-                    Rum Production Visualization
-                </div>
-                <div class="card-content">
-                    <h3>Rosalie Bay Rum Visualization</h3>
-                    <p>Interactive data visualization showcasing our rum production process and metrics over time.</p>
-                    <a href="rosalie-bay-visualization-html.html" class="btn">View Visualization</a>
-                </div>
-            </div>
-            
-            <div class="project-card">
-                <div class="card-header">
-                    <span class="category-badge category-business">Marketing</span>
-                    Retail Strategy
-                </div>
-                <div class="card-content">
-                    <h3>Retailer Pricing Analysis</h3>
-                    <p>Detailed breakdown of our retailer pricing structure with profit margins and recommended selling prices.</p>
-                    <a href="retailer-pricing-html.html" class="btn">View Retailer Data</a>
-                </div>
-            </div>
+        <div class="placeholder-chart">
+            <div class="placeholder-text">Interactive Chart Loading...</div>
         </div>
-    </section>
-    
-    <section class="section">
-        <div class="section-heading">
-            <h2>Agricultural Data Visualizations</h2>
-        </div>
-        <p class="section-description">Visualizations that track agricultural production, farmer payments, and supply chain data</p>
         
-        <div class="project-grid">
-            <div class="project-card">
-                <div class="card-header">
-                    <span class="category-badge category-agriculture">Farmer Data</span>
-                    Payment Analysis
-                </div>
-                <div class="card-content">
-                    <h3>Farmer Payment Distribution</h3>
-                    <p>Review the distribution of payments to our local sugarcane farmers across different communities in Dominica.</p>
-                    <a href="farmer-payments.html" class="btn">View Farmer Data</a>
-                </div>
-            </div>
-            
-            <div class="project-card">
-                <div class="card-header">
-                    <span class="category-badge category-agriculture">Production</span>
-                    Distillery Schedule
-                </div>
-                <div class="card-content">
-                    <h3>Distillery Production Schedule</h3>
-                    <p>Visual overview of our distillery's production schedule, including fermentation and distillation activities.</p>
-                    <a href="rosalie-bay-distillery-schedule.html" class="btn">View Schedule</a>
-                </div>
-            </div>
-            
-            <div class="project-card">
-                <div class="card-header">
-                    <span class="category-badge category-agriculture">Supply Chain</span>
-                    Cane Supply Data
-                </div>
-                <div class="card-content">
-                    <h3>Sugarcane Supply Analysis</h3>
-                    <p>Visualization of our sugarcane supply chain, including volume by village and distribution patterns.</p>
-                    <a href="farmer-cane-supply.html" class="btn">View Supply Data</a>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <section class="section">
-        <div class="section-heading">
-            <h2>Conservation Data Visualizations</h2>
-        </div>
-        <p class="section-description">Tracking our conservation efforts and environmental impact through data visualization</p>
+        <p>Over the 2023-2024 period, we've made payments to over 80 farmers across more than 15 villages in Dominica. This data provides insights into our supply chain and demonstrates our commitment to supporting local farmers.</p>
         
-        <div class="project-grid">
-            <div class="project-card">
-                <div class="card-header">
-                    <span class="category-badge category-conservation">Wildlife</span>
-                    Sea Turtle Monitoring
-                </div>
-                <div class="card-content">
-                    <h3>Sea Turtle Data Tracker</h3>
-                    <p>Interactive visualization of sea turtle nesting patterns, hatching rates, and conservation metrics over time.</p>
-                    <a href="sea-turtle-data.html" class="btn">View Turtle Data</a>
-                </div>
-            </div>
-            
-            <div class="project-card">
-                <div class="card-header">
-                    <span class="category-badge category-conservation">Sustainability</span>
-                    Carbon Footprint
-                </div>
-                <div class="card-content">
-                    <h3>Production Carbon Impact</h3>
-                    <p>Analysis of our carbon footprint and sustainability initiatives throughout the rum production process.</p>
-                    <a href="#" class="btn">Coming Soon</a>
-                </div>
-            </div>
-            
-            <div class="project-card">
-                <div class="card-header">
-                    <span class="category-badge category-conservation">Marine</span>
-                    Ocean Conservation
-                </div>
-                <div class="card-content">
-                    <h3>Marine Conservation Impact</h3>
-                    <p>Visualization of our marine conservation efforts and their impact on local ecosystems.</p>
-                    <a href="#" class="btn">Coming Soon</a>
-                </div>
-            </div>
+        <div class="insights">
+            <h3>Key Insights</h3>
+            <ul>
+                <li>La Plaine leads with approximately $76,000 in payments, followed by Belles ($40,000) and Wesley ($33,000)</li>
+                <li>The top 3 villages account for about 60% of all payments</li>
+                <li>Within villages, there's typically a top farmer who receives significantly more than others</li>
+                <li>La Plaine has both the highest total payments and the highest individual farmer payments</li>
+                <li>Smaller villages often have more even payment distribution among farmers</li>
+            </ul>
         </div>
-    </section>
+        
+        <div class="placeholder-chart">
+            <div class="placeholder-text">Village Distribution Chart Loading...</div>
+        </div>
+        
+        <p>The visualization above shows how payments are distributed across different villages in Dominica, highlighting our focus on specific growing regions.</p>
+        
+        <a href="index.html" class="btn">Return to Home</a>
+    </div>
     
     <footer>
         <p>© 2025 Jake's Data Visualization Projects</p>
     </footer>
+    
+    <script>
+        // Simulate chart loading
+        setTimeout(() => {
+            document.querySelectorAll('.placeholder-text').forEach(el => {
+                el.textContent = "This is a placeholder for the interactive chart. Please add the actual visualization component here.";
+            });
+        }, 1500);
+    </script>
 </body>
 </html>
