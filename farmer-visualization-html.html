@@ -4,34 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rosalie Bay Rum - Farmer Data Visualization</title>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
-    <!-- Optional: Add the datalabels plugin -->
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+    
+    <!-- Chart.js from CDN (more reliable) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: Arial, sans-serif;
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
             background-color: #f5f5f5;
-            color: #333;
         }
         
-        h1, h2, h3 {
+        h1, h2 {
             color: #2a5555;
-        }
-        
-        .header {
             text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
         }
         
         .chart-container {
@@ -39,22 +27,11 @@
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            margin-bottom: 20px;
-            position: relative;
-        }
-        
-        .chart-half {
-            width: calc(50% - 20px);
-            min-width: 450px;
+            margin-bottom: 30px;
             height: 400px;
         }
         
-        .chart-full {
-            width: 100%;
-            height: 800px;
-        }
-        
-        .stats-container {
+        .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 15px;
@@ -84,161 +61,12 @@
             font-size: 12px;
             margin-top: 5px;
         }
-        
-        .controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 20px;
-            background-color: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        .control-group {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .control-label {
-            margin-bottom: 5px;
-            font-weight: bold;
-            font-size: 14px;
-        }
-        
-        .btn-group {
-            display: flex;
-        }
-        
-        .btn {
-            padding: 8px 12px;
-            background-color: #f0f0f0;
-            border: 1px solid #ddd;
-            cursor: pointer;
-        }
-        
-        .btn:first-child {
-            border-radius: 4px 0 0 4px;
-        }
-        
-        .btn:last-child {
-            border-radius: 0 4px 4px 0;
-        }
-        
-        .btn.active {
-            background-color: #2a5555;
-            color: white;
-            border-color: #2a5555;
-        }
-        
-        .search-box {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            width: 100%;
-        }
-        
-        .yearly-breakdown {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .year-cards {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .year-card {
-            flex: 1;
-            min-width: 200px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            padding: 15px;
-        }
-        
-        .year-title {
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        
-        .data-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-        }
-        
-        .disclaimer {
-            font-size: 12px;
-            color: #888;
-            margin-top: 10px;
-        }
-        
-        .insights {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin-top: 20px;
-        }
-        
-        .insights ul {
-            padding-left: 20px;
-        }
-        
-        .insights li {
-            margin-bottom: 8px;
-        }
-        
-        .footer {
-            margin-top: 30px;
-            font-size: 12px;
-            color: #888;
-            text-align: center;
-        }
-        
-        @media (max-width: 768px) {
-            .chart-half {
-                width: 100%;
-                min-width: unset;
-            }
-        }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Rosalie Bay Rum - Farmer Data Visualization (2023-2024)</h1>
-    </div>
+    <h1>Rosalie Bay Rum - Farmer Data Visualization</h1>
     
-    <div class="controls">
-        <div class="control-group">
-            <span class="control-label">View:</span>
-            <div class="btn-group">
-                <button class="btn active" id="view-pounds">Cane Supply (lbs)</button>
-                <button class="btn" id="view-payments">Payments ($)</button>
-            </div>
-        </div>
-        
-        <div class="control-group">
-            <span class="control-label">Sort by:</span>
-            <div class="btn-group">
-                <button class="btn active" id="sort-village">Village Groups</button>
-                <button class="btn" id="sort-individual">Individual Rank</button>
-            </div>
-        </div>
-        
-        <div class="control-group" style="flex-grow: 1;">
-            <span class="control-label">Search:</span>
-            <input type="text" class="search-box" id="search-input" placeholder="Search farmer or village...">
-        </div>
-    </div>
-    
-    <div class="stats-container">
+    <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-title">Total Farmers</div>
             <div class="stat-value">80</div>
@@ -264,705 +92,113 @@
         </div>
     </div>
     
-    <div class="yearly-breakdown">
-        <h2>Estimated Yearly Breakdown</h2>
-        <p>
-            The data represents combined totals across 2023-2024. Based on harvest patterns, we can estimate the yearly breakdown:
-        </p>
-        
-        <div class="year-cards">
-            <div class="year-card">
-                <div class="year-title">2023 Harvest (Est.)</div>
-                <div class="data-row">
-                    <span>Cane:</span>
-                    <span>175,280 lbs</span>
-                </div>
-                <div class="data-row">
-                    <span>Payments:</span>
-                    <span>$105,168</span>
-                </div>
-                <div class="data-row" style="margin-top: 10px; font-size: 12px; color: #666;">
-                    <span>Note: Excludes trucking, planting and land clearing costs</span>
-                </div>
-            </div>
-            
-            <div class="year-card">
-                <div class="year-title">2024 Harvest (Est.)</div>
-                <div class="data-row">
-                    <span>Cane:</span>
-                    <span>262,919 lbs</span>
-                </div>
-                <div class="data-row">
-                    <span>Payments:</span>
-                    <span>$279,000</span>
-                </div>
-                <div class="data-row" style="margin-top: 10px; font-size: 12px; color: #666;">
-                    <span>Note: Excludes trucking, planting and land clearing costs</span>
-                </div>
-            </div>
-        </div>
-        
-        <div class="disclaimer">
-            Note: This is an estimated breakdown based on typical harvest patterns. Actual yearly distributions may vary.
-        </div>
+    <div class="chart-container">
+        <h2>Village Distribution (Cane Pounds)</h2>
+        <canvas id="villageChart"></canvas>
     </div>
     
-    <div class="container">
-        <div class="chart-container chart-half">
-            <h2>Village Distribution</h2>
-            <canvas id="villageChart" style="max-height: 350px;"></canvas>
-        </div>
-        
-        <div class="chart-container chart-half">
-            <h2>Top 10 Villages</h2>
-            <canvas id="pieChart" style="max-height: 350px;"></canvas>
-        </div>
+    <div class="chart-container">
+        <h2>Top 10 Villages (Cane Pounds)</h2>
+        <canvas id="pieChart"></canvas>
     </div>
     
-    <div class="chart-container chart-full">
-        <h2 id="farmerChartTitle">Farmers by Village (Grouped)</h2>
-        <canvas id="farmerChart" style="max-height: 700px;"></canvas>
-    </div>
-    
-    <div class="insights">
-        <h2>Key Insights</h2>
-        <ul>
-            <li>La Plaine is the dominant village for cane production, accounting for approximately 35% of all cane by weight</li>
-            <li>The top 3 farmers (all from La Plaine) account for approximately 35% of total production</li>
-            <li>There is a significant drop in production volumes after the top 10 farmers</li>
-            <li>Belles has many small-to-medium sized farmers (10+ total), resulting in the second highest village total</li>
-            <li>Many farmers received relatively small payments (under $1,000), suggesting many small-scale producers</li>
-            <li>Production ranges from under 200 pounds to over 68,000 pounds, showing the wide spectrum of farm operations</li>
-            <li>Wesley has a consistent base of farmers with moderate production</li>
-            <li>Total production of 438,199 lbs is across the entire 2023-2024 period, not a single year</li>
-        </ul>
-        
-        <div class="disclaimer">
-            * Colors represent different villages<br>
-            * Data represents the combined 2023-2024 harvest period (two growing seasons)<br>
-            * The yearly breakdown shown is an estimation as the source data does not separate by individual years
-        </div>
-    </div>
-    
-    <div class="footer">
-        Rosalie Bay Rum Farmer Visualization - Data from 2023-2024
-    </div>
-
     <script>
-        // Set a fixed height for all chart containers
-        Chart.defaults.maintainAspectRatio = false;
-        
-        // Raw data for all farmers
-        const farmerData = [
-            { name: "Gracien Fountain", village: "La Plaine", pounds: 68483, payments: 41090 },
-            { name: "Danny Newton", village: "La Plaine", pounds: 37428, payments: 22457 },
-            { name: "Ashton Samuel", village: "La Plaine", pounds: 27421, payments: 16453 },
-            { name: "Harris St Ville", village: "Delice/Boetica", pounds: 16725, payments: 10035 },
-            { name: "Leon JnoBaptiste", village: "Reviere Cyrique", pounds: 10270, payments: 6162 },
-            { name: "Brent Carty", village: "Despore", pounds: 14588, payments: 8753 },
-            { name: "Charles Watty", village: "Wesley", pounds: 9705, payments: 5823 },
-            { name: "Auxentius Maxime", village: "Belles", pounds: 18350, payments: 11010 },
-            { name: "Jean-Charles Joseph", village: "Tranto", pounds: 5372, payments: 3223 },
-            { name: "Kerdian Luke", village: "Belles", pounds: 9053, payments: 5432 },
-            { name: "Barry St Rose", village: "La Plaine", pounds: 8500, payments: 5100 },
-            { name: "Kenneth Charles", village: "Corona", pounds: 7093, payments: 4256 },
-            { name: "Dorian Laudant", village: "Petite Soufriere", pounds: 13383, payments: 8030 },
-            { name: "Patrick Espirit", village: "Despore", pounds: 13976, payments: 8386 },
-            { name: "Dwayne Thomas", village: "Delice", pounds: 11920, payments: 7152 },
-            { name: "Jerry Prevost", village: "La Plaine", pounds: 5296, payments: 3178 },
-            { name: "Lambert Hilaire", village: "Delice", pounds: 7118, payments: 4271 },
-            { name: "Rodriguez Blaize", village: "La Plaine", pounds: 3531, payments: 2119 },
-            { name: "Sean George", village: "Reviere Cyrique", pounds: 6073, payments: 3644 },
-            { name: "Seraphina Laurent", village: "Pond Casse", pounds: 6276, payments: 3766 },
-            { name: "Everinton Phillip", village: "Wesley", pounds: 3813, payments: 2288 },
-            { name: "Brenton Williams", village: "Grenville", pounds: 5158, payments: 3095 },
-            { name: "Sheldon Simone", village: "La Plaine", pounds: 5870, payments: 3522 },
-            { name: "Henderson Romain", village: "Rosalie", pounds: 7850, payments: 4710 },
-            { name: "Julian Jeremy", village: "Wesley", pounds: 4711, payments: 2827 },
-            { name: "Jenner Guiste", village: "Delice", pounds: 4390, payments: 2634 },
-            { name: "Roy Espirit", village: "Belles", pounds: 6850, payments: 4110 },
-            { name: "Julia Canoville", village: "Belles", pounds: 3652, payments: 2191 },
-            { name: "Conly Durand", village: "Belles", pounds: 3165, payments: 1899 },
-            { name: "Bernard Laurent", village: "Wesley", pounds: 4348, payments: 2609 },
-            { name: "Cletus Joseph", village: "Castle Bruce", pounds: 9393, payments: 5636 },
-            { name: "Edward Watty", village: "Wesley", pounds: 2805, payments: 1683 },
-            { name: "Randy Laudat", village: "Petite Soufriere", pounds: 2846, payments: 1708 },
-            { name: "Egbert Nelson", village: "Marigot", pounds: 2383, payments: 1430 },
-            { name: "Pap Oscar", village: "Rosalie", pounds: 7980, payments: 4788 },
-            { name: "Kenrick Whilshire", village: "Castle Bruce", pounds: 2218, payments: 1331 },
-            { name: "Yannick George", village: "Grand fond", pounds: 2410, payments: 1446 },
-            { name: "Connie Telemacque", village: "Wesley", pounds: 1759, payments: 1055 },
-            { name: "Remy Joseph", village: "Marigot/Calibishie", pounds: 2653, payments: 1592 },
-            { name: "Eyes Joseph", village: "Wesley", pounds: 2002, payments: 1201 },
-            { name: "Alexander Richards", village: "Anse de Mai", pounds: 1488, payments: 893 },
-            { name: "Joseph Jacob", village: "Wesley/Marigot", pounds: 1880, payments: 1128 },
-            { name: "Kensworth Knight", village: "Wesley", pounds: 1803, payments: 1082 },
-            { name: "Leban Telemacque", village: "Wesley", pounds: 2228, payments: 1337 },
-            { name: "Irene Celestine", village: "Anse de Mai", pounds: 741, payments: 445 },
-            { name: "Fernita Pascal", village: "Reviere Cyrique", pounds: 1225, payments: 735 },
-            { name: "Debra Mark", village: "Delice", pounds: 4213, payments: 2528 },
-            { name: "Goddard Rodney", village: "Delice", pounds: 3173, payments: 1904 },
-            { name: "Jean Dieuvainjahan", village: "Belles", pounds: 1822, payments: 1093 },
-            { name: "Jennifer Espirit", village: "Belles", pounds: 3896, payments: 2338 },
-            { name: "Cletus Challenger", village: "Castle Bruce", pounds: 1608, payments: 965 },
-            { name: "Paul Carlton", village: "Wesley/Marigot", pounds: 2280, payments: 1368 },
-            { name: "Bernad Isaac", village: "Anse de Mai", pounds: 509, payments: 305 },
-            { name: "Maryanne Diggs", village: "Anse de Mai", pounds: 1478, payments: 887 },
-            { name: "Samuel Augustine", village: "Wesley/Woodford Hill", pounds: 1173, payments: 704 },
-            { name: "Lungsford Duban", village: "Wesley", pounds: 2675, payments: 1605 },
-            { name: "Nicholas Espirit", village: "Belles", pounds: 514, payments: 308 },
-            { name: "Kelvin Watty", village: "Wesley", pounds: 391, payments: 235 },
-            { name: "Carlos Challenger", village: "Belles", pounds: 3399, payments: 2039 },
-            { name: "Franccess Diggs", village: "Anse de Mai", pounds: 907, payments: 544 },
-            { name: "David Robin", village: "Wesley", pounds: 412, payments: 247 },
-            { name: "Jamestia Jno Baptiste", village: "Reviere Cyrique", pounds: 533, payments: 320 },
-            { name: "Edmund Sylvester", village: "Marigot", pounds: 955, payments: 573 },
-            { name: "John Luke", village: "Belles", pounds: 2111, payments: 1267 },
-            { name: "Kevin James", village: "Belles", pounds: 1027, payments: 616 },
-            { name: "Anna Rose", village: "Wesley", pounds: 245, payments: 147 },
-            { name: "Lorielle Laurant", village: "Wesley", pounds: 466, payments: 280 },
-            { name: "Julitta Williams", village: "Wesley", pounds: 452, payments: 271 },
-            { name: "Charlesworth Joseph", village: "Wesley", pounds: 901, payments: 541 },
-            { name: "Verna Jacob", village: "Wesley", pounds: 1412, payments: 847 },
-            { name: "Monica Espirit", village: "Belles", pounds: 431, payments: 259 },
-            { name: "Jovin Greenaway", village: "Salibia", pounds: 440, payments: 264 },
-            { name: "Prian Williams", village: "Wesley", pounds: 528, payments: 317 },
-            { name: "Vickenson Edwards", village: "Wesley", pounds: 393, payments: 236 },
-            { name: "Serge Badio", village: "Belles", pounds: 1047, payments: 628 },
-            { name: "Joe Languuere", village: "Belles", pounds: 461, payments: 277 },
-            { name: "Karel white", village: "Bense", pounds: 163, payments: 98 },
-            { name: "Dyanne Pascal", village: "Reviere Cyrique", pounds: 155, payments: 93 },
-            { name: "Salim Poydore", village: "Grand fond", pounds: 493, payments: 296 },
-            { name: "Ricky Joseph", village: "Canefield", pounds: 1354, payments: 812 }
+        // Village data
+        const villageData = [
+            { village: "La Plaine", pounds: 156529, payments: 93919 },
+            { village: "Belles", pounds: 51300, payments: 30780 },
+            { village: "Wesley", pounds: 34430, payments: 20658 },
+            { village: "Delice", pounds: 47589, payments: 28553 },
+            { village: "Despore", pounds: 28564, payments: 17139 },
+            { village: "Petite Soufriere", pounds: 16229, payments: 9738 },
+            { village: "Anse de Mai", pounds: 5123, payments: 3074 },
+            { village: "Castle Bruce", pounds: 13219, payments: 7932 },
+            { village: "Reviere Cyrique", pounds: 18256, payments: 10954 },
+            { village: "Pond Casse", pounds: 6276, payments: 3766 },
+            { village: "Grand fond", pounds: 2903, payments: 1742 },
+            { village: "Marigot", pounds: 5991, payments: 3595 },
+            { village: "Rosalie", pounds: 15830, payments: 9498 },
+            { village: "Tranto", pounds: 5372, payments: 3223 },
+            { village: "Grenville", pounds: 5158, payments: 3095 },
+            { village: "Corona", pounds: 7093, payments: 4256 },
+            { village: "Salibia", pounds: 440, payments: 264 },
+            { village: "Bense", pounds: 163, payments: 98 },
+            { village: "Canefield", pounds: 1354, payments: 812 }
         ];
         
-        // Village color mapping
-        const villageColors = {
-            "La Plaine": "#2a9d8f",
-            "Belles": "#e9c46a",
-            "Wesley": "#f4a261",
-            "Delice": "#e76f51",
-            "Despore": "#264653",
-            "Petite Soufriere": "#8ecae6",
-            "Anse de Mai": "#219ebc",
-            "Castle Bruce": "#023047",
-            "Reviere Cyrique": "#ffb703",
-            "Pond Casse": "#fb8500",
-            "Grand fond": "#606c38",
-            "Marigot": "#283618",
-            "Rosalie": "#dda15e",
-            "Tranto": "#14213d",
-            "Grenville": "#fca311",
-            "Corona": "#e63946",
-            "Woodford Hill": "#a8dadc",
-            "Salibia": "#457b9d",
-            "Bense": "#1d3557",
-            "Canefield": "#84a98c",
-            "Boetica": "#cad2c5",
-            "Calibishie": "#bc6c25"
-        };
+        // Village colors
+        const villageColors = [
+            "#2a9d8f", "#e9c46a", "#f4a261", "#e76f51", "#264653", 
+            "#8ecae6", "#219ebc", "#023047", "#ffb703", "#fb8500", 
+            "#606c38", "#283618", "#dda15e", "#14213d", "#fca311", 
+            "#e63946", "#457b9d", "#1d3557", "#84a98c"
+        ];
         
-        // Application state
-        let state = {
-            viewMode: 'pounds',
-            sortMode: 'village',
-            searchTerm: '',
-            villageChart: null,
-            pieChart: null,
-            farmerChart: null
-        };
+        // Sort village data by pounds
+        villageData.sort((a, b) => b.pounds - a.pounds);
         
-        // For villages with multiple names or "/" in the name
-        function getNormalizedVillageName(villageName) {
-            if (villageName.includes("/")) {
-                return villageName.split("/")[0];
-            }
-            return villageName;
-        }
-        
-        // Get village color
-        function getVillageColor(villageName) {
-            const normalizedName = getNormalizedVillageName(villageName);
-            return villageColors[normalizedName] || "#adb5bd";
-        }
-        
-        // Process data
-        function processData() {
-            // First make a copy of data that we can filter
-            let data = [...farmerData];
-            
-            // Filter by search term
-            if (state.searchTerm) {
-                const term = state.searchTerm.toLowerCase();
-                data = data.filter(farmer => 
-                    farmer.name.toLowerCase().includes(term) || 
-                    farmer.village.toLowerCase().includes(term)
-                );
-            }
-            
-            // Group by village
-            const villages = {};
-            data.forEach(farmer => {
-                const normalizedVillage = getNormalizedVillageName(farmer.village);
-                if (!villages[normalizedVillage]) {
-                    villages[normalizedVillage] = [];
-                }
-                villages[normalizedVillage].push(farmer);
-            });
-            
-            // Calculate village totals
-            const villageTotalData = Object.keys(villages).map(village => {
-                const totalPounds = villages[village].reduce((sum, farmer) => sum + farmer.pounds, 0);
-                const totalPayments = villages[village].reduce((sum, farmer) => sum + farmer.payments, 0);
-                const farmerCount = villages[village].length;
-                return { 
-                    village,
-                    totalPounds,
-                    totalPayments,
-                    farmerCount,
-                    color: getVillageColor(village)
-                };
-            });
-            
-            // Sort village totals based on current view mode
-            const sortedVillageTotals = [...villageTotalData].sort((a, b) => {
-                if (state.viewMode === 'pounds') {
-                    return b.totalPounds - a.totalPounds;
-                } else {
-                    return b.totalPayments - a.totalPayments;
-                }
-            });
-            
-            // Sort farmers within each village
-            Object.keys(villages).forEach(village => {
-                villages[village].sort((a, b) => {
-                    if (state.viewMode === 'pounds') {
-                        return b.pounds - a.pounds;
-                    } else {
-                        return b.payments - a.payments;
+        // Initialize village bar chart
+        const villageCtx = document.getElementById('villageChart').getContext('2d');
+        new Chart(villageCtx, {
+            type: 'bar',
+            data: {
+                labels: villageData.map(v => v.village),
+                datasets: [{
+                    label: 'Cane Weight (lbs)',
+                    data: villageData.map(v => v.pounds),
+                    backgroundColor: villageColors,
+                    borderColor: villageColors,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.parsed.x;
+                                return `${value.toLocaleString()} lbs`;
+                            }
+                        }
                     }
-                });
-            });
-            
-            // Create the data for the charts
-            let processedFarmerData;
-            
-            if (state.sortMode === 'village') {
-                // Sort by village, then by individual amounts
-                processedFarmerData = [];
-                sortedVillageTotals.forEach(villageData => {
-                    const villageFarmers = villages[villageData.village];
-                    
-                    // Add all farmers in this village
-                    villageFarmers.forEach(farmer => {
-                        processedFarmerData.push({
-                            ...farmer,
-                            color: villageData.color
-                        });
-                    });
-                });
-            } else {
-                // Sort by individual amounts only
-                processedFarmerData = data.map(farmer => ({
-                    ...farmer,
-                    color: getVillageColor(farmer.village)
-                }));
-                
-                if (state.viewMode === 'pounds') {
-                    processedFarmerData.sort((a, b) => b.pounds - a.pounds);
-                } else {
-                    processedFarmerData.sort((a, b) => b.payments - a.payments);
                 }
             }
-            
-            return {
-                villageTotals: sortedVillageTotals,
-                farmerData: processedFarmerData
-            };
-        }
+        });
         
-        // Initialize charts
-        function initCharts() {
-            const processed = processData();
-            
-            // Village bar chart
-            const villageCtx = document.getElementById('villageChart').getContext('2d');
-            state.villageChart = new Chart(villageCtx, {
-                type: 'bar',
-                data: {
-                    labels: processed.villageTotals.map(v => v.village),
-                    datasets: [{
-                        label: state.viewMode === 'pounds' ? 'Cane Weight (lbs)' : 'Payment Amount ($)',
-                        data: processed.villageTotals.map(v => state.viewMode === 'pounds' ? v.totalPounds : v.totalPayments),
-                        backgroundColor: processed.villageTotals.map(v => v.color),
-                        borderColor: processed.villageTotals.map(v => v.color),
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    scales: {
-                        x: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: state.viewMode === 'pounds' ? 'Pounds' : 'Dollars'
+        // Initialize pie chart
+        const pieCtx = document.getElementById('pieChart').getContext('2d');
+        new Chart(pieCtx, {
+            type: 'pie',
+            data: {
+                labels: villageData.slice(0, 10).map(v => v.village),
+                datasets: [{
+                    label: 'Cane Weight (lbs)',
+                    data: villageData.slice(0, 10).map(v => v.pounds),
+                    backgroundColor: villageColors.slice(0, 10),
+                    borderColor: villageColors.slice(0, 10),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.parsed;
+                                return `${value.toLocaleString()} lbs`;
                             }
                         }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.dataset.label || '';
-                                    const value = context.parsed.x;
-                                    const formattedValue = value.toLocaleString();
-                                    return `${label}: ${state.viewMode === 'pounds' ? formattedValue + ' lbs' : '$' + formattedValue}`;
-                                }
-                            }
-                        }
-                    },
-                    maintainAspectRatio: false
-                }
-            });
-            
-            // Pie chart (top 10 villages)
-            const pieCtx = document.getElementById('pieChart').getContext('2d');
-            const topVillages = processed.villageTotals.slice(0, 10);
-            
-            state.pieChart = new Chart(pieCtx, {
-                type: 'pie',
-                data: {
-                    labels: topVillages.map(v => v.village),
-                    datasets: [{
-                        label: state.viewMode === 'pounds' ? 'Cane Weight (lbs)' : 'Payment Amount ($)',
-                        data: topVillages.map(v => state.viewMode === 'pounds' ? v.totalPounds : v.totalPayments),
-                        backgroundColor: topVillages.map(v => v.color),
-                        borderColor: topVillages.map(v => v.color),
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.label || '';
-                                    const value = context.parsed;
-                                    const formattedValue = value.toLocaleString();
-                                    return `${label}: ${state.viewMode === 'pounds' ? formattedValue + ' lbs' : '$' + formattedValue}`;
-                                }
-                            }
-                        }
-                    },
-                    maintainAspectRatio: false
-                }
-            });
-            
-            // Farmer bar chart
-            const farmerCtx = document.getElementById('farmerChart').getContext('2d');
-            
-            state.farmerChart = new Chart(farmerCtx, {
-                type: 'bar',
-                data: {
-                    labels: processed.farmerData.map(f => f.name),
-                    datasets: [{
-                        label: state.viewMode === 'pounds' ? 'Cane Weight (lbs)' : 'Payment Amount ($)',
-                        data: processed.farmerData.map(f => state.viewMode === 'pounds' ? f.pounds : f.payments),
-                        backgroundColor: processed.farmerData.map(f => f.color),
-                        borderColor: processed.farmerData.map(f => f.color),
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    scales: {
-                        x: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: state.viewMode === 'pounds' ? 'Pounds' : 'Dollars'
-                            }
-                        },
-                        y: {
-                            ticks: {
-                                callback: function(value) {
-                                    // Display farmer name and village
-                                    const farmer = processed.farmerData[value];
-                                    if (farmer) {
-                                        return `${farmer.name} (${farmer.village})`;
-                                    }
-                                    return value;
-                                }
-                            },
-                            // Limit the number of farmers shown to prevent excessive scrolling
-                            max: 40
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const farmer = processed.farmerData[context.dataIndex];
-                                    const value = context.parsed.x;
-                                    const formattedValue = value.toLocaleString();
-                                    return [
-                                        `Village: ${farmer.village}`,
-                                        `${state.viewMode === 'pounds' ? 'Cane: ' + formattedValue + ' lbs' : 'Payment: 
-        }
-        
-        // Update charts
-        function updateCharts() {
-            const processed = processData();
-            
-            // Update village bar chart
-            state.villageChart.data.labels = processed.villageTotals.map(v => v.village);
-            state.villageChart.data.datasets[0].label = state.viewMode === 'pounds' ? 'Cane Weight (lbs)' : 'Payment Amount ($)';
-            state.villageChart.data.datasets[0].data = processed.villageTotals.map(v => state.viewMode === 'pounds' ? v.totalPounds : v.totalPayments);
-            state.villageChart.data.datasets[0].backgroundColor = processed.villageTotals.map(v => v.color);
-            state.villageChart.data.datasets[0].borderColor = processed.villageTotals.map(v => v.color);
-            state.villageChart.options.scales.x.title.text = state.viewMode === 'pounds' ? 'Pounds' : 'Dollars';
-            state.villageChart.update();
-            
-            // Update pie chart
-            const topVillages = processed.villageTotals.slice(0, 10);
-            state.pieChart.data.labels = topVillages.map(v => v.village);
-            state.pieChart.data.datasets[0].label = state.viewMode === 'pounds' ? 'Cane Weight (lbs)' : 'Payment Amount ($)';
-            state.pieChart.data.datasets[0].data = topVillages.map(v => state.viewMode === 'pounds' ? v.totalPounds : v.totalPayments);
-            state.pieChart.data.datasets[0].backgroundColor = topVillages.map(v => v.color);
-            state.pieChart.data.datasets[0].borderColor = topVillages.map(v => v.color);
-            state.pieChart.update();
-            
-            // Update farmer chart title
-            document.getElementById('farmerChartTitle').textContent = state.sortMode === 'village' 
-                ? 'Farmers by Village (Grouped)' 
-                : 'All Farmers (Ranked by ' + (state.viewMode === 'pounds' ? 'Cane Supply)' : 'Payments)');
-            
-            // Update farmer bar chart (first page only)
-            const pageData = processed.farmerData.slice(0, 40); // Show only first page
-            state.farmerChart.data.labels = pageData.map(f => f.name);
-            state.farmerChart.data.datasets[0].label = state.viewMode === 'pounds' ? 'Cane Weight (lbs)' : 'Payment Amount ($)';
-            state.farmerChart.data.datasets[0].data = pageData.map(f => state.viewMode === 'pounds' ? f.pounds : f.payments);
-            state.farmerChart.data.datasets[0].backgroundColor = pageData.map(f => f.color);
-            state.farmerChart.data.datasets[0].borderColor = pageData.map(f => f.color);
-            state.farmerChart.options.scales.x.title.text = state.viewMode === 'pounds' ? 'Pounds' : 'Dollars';
-            state.farmerChart.update();
-            
-            // Update page info
-            const pageInfo = document.getElementById('page-info');
-            if (pageInfo) {
-                const maxPages = Math.ceil(processed.farmerData.length / 40);
-                pageInfo.textContent = `Page 1 of ${maxPages}`;
-            }
-        }
-        
-        // Event listeners
-        document.getElementById('view-pounds').addEventListener('click', function() {
-            this.classList.add('active');
-            document.getElementById('view-payments').classList.remove('active');
-            state.viewMode = 'pounds';
-            updateCharts();
-        });
-        
-        document.getElementById('view-payments').addEventListener('click', function() {
-            this.classList.add('active');
-            document.getElementById('view-pounds').classList.remove('active');
-            state.viewMode = 'payments';
-            updateCharts();
-        });
-        
-        document.getElementById('sort-village').addEventListener('click', function() {
-            this.classList.add('active');
-            document.getElementById('sort-individual').classList.remove('active');
-            state.sortMode = 'village';
-            updateCharts();
-        });
-        
-        document.getElementById('sort-individual').addEventListener('click', function() {
-            this.classList.add('active');
-            document.getElementById('sort-village').classList.remove('active');
-            state.sortMode = 'individual';
-            updateCharts();
-        });
-        
-        document.getElementById('search-input').addEventListener('input', function() {
-            state.searchTerm = this.value;
-            updateCharts();
-        });
-        
-        // Add pagination controls for farmer chart
-        function setupPagination() {
-            const paginationContainer = document.createElement('div');
-            paginationContainer.className = 'pagination-controls';
-            paginationContainer.style.textAlign = 'center';
-            paginationContainer.style.marginTop = '15px';
-            
-            const prevButton = document.createElement('button');
-            prevButton.textContent = 'Previous';
-            prevButton.className = 'btn';
-            prevButton.style.marginRight = '10px';
-            
-            const nextButton = document.createElement('button');
-            nextButton.textContent = 'Next';
-            nextButton.className = 'btn';
-            
-            paginationContainer.appendChild(prevButton);
-            paginationContainer.appendChild(nextButton);
-            
-            document.querySelector('.chart-full').appendChild(paginationContainer);
-            
-            let currentPage = 0;
-            const itemsPerPage = 40;
-            
-            prevButton.addEventListener('click', function() {
-                if (currentPage > 0) {
-                    currentPage--;
-                    updateFarmerChartPage();
-                }
-            });
-            
-            nextButton.addEventListener('click', function() {
-                const processed = processData();
-                const maxPages = Math.ceil(processed.farmerData.length / itemsPerPage);
-                
-                if (currentPage < maxPages - 1) {
-                    currentPage++;
-                    updateFarmerChartPage();
-                }
-            });
-            
-            function updateFarmerChartPage() {
-                const processed = processData();
-                const start = currentPage * itemsPerPage;
-                const end = start + itemsPerPage;
-                const pageData = processed.farmerData.slice(start, end);
-                
-                state.farmerChart.data.labels = pageData.map(f => f.name);
-                state.farmerChart.data.datasets[0].data = pageData.map(f => state.viewMode === 'pounds' ? f.pounds : f.payments);
-                state.farmerChart.data.datasets[0].backgroundColor = pageData.map(f => f.color);
-                state.farmerChart.data.datasets[0].borderColor = pageData.map(f => f.color);
-                state.farmerChart.update();
-                
-                // Update page indicators
-                const pageInfo = document.getElementById('page-info');
-                if (pageInfo) {
-                    const maxPages = Math.ceil(processed.farmerData.length / itemsPerPage);
-                    pageInfo.textContent = `Page ${currentPage + 1} of ${maxPages}`;
+                    }
                 }
             }
-            
-            // Add page indicator
-            const pageInfo = document.createElement('div');
-            pageInfo.id = 'page-info';
-            pageInfo.style.marginTop = '10px';
-            pageInfo.style.fontSize = '14px';
-            pageInfo.style.color = '#666';
-            paginationContainer.appendChild(pageInfo);
-            
-            // Initial update
-            const maxPages = Math.ceil(processData().farmerData.length / itemsPerPage);
-            pageInfo.textContent = `Page 1 of ${maxPages}`;
-        }
-        
-        // Initialize app
-        window.addEventListener('DOMContentLoaded', function() {
-            initCharts();
-            setupPagination();
-        });
-    </script>
-</body>
-</html>
- + formattedValue}`
-                                    ];
-                                }
-                            }
-                        }
-                    },
-                    maintainAspectRatio: false
-                }
-            });
-        }
-        
-        // Update charts
-        function updateCharts() {
-            const processed = processData();
-            
-            // Update village bar chart
-            state.villageChart.data.labels = processed.villageTotals.map(v => v.village);
-            state.villageChart.data.datasets[0].label = state.viewMode === 'pounds' ? 'Cane Weight (lbs)' : 'Payment Amount ($)';
-            state.villageChart.data.datasets[0].data = processed.villageTotals.map(v => state.viewMode === 'pounds' ? v.totalPounds : v.totalPayments);
-            state.villageChart.data.datasets[0].backgroundColor = processed.villageTotals.map(v => v.color);
-            state.villageChart.data.datasets[0].borderColor = processed.villageTotals.map(v => v.color);
-            state.villageChart.options.scales.x.title.text = state.viewMode === 'pounds' ? 'Pounds' : 'Dollars';
-            state.villageChart.update();
-            
-            // Update pie chart
-            const topVillages = processed.villageTotals.slice(0, 10);
-            state.pieChart.data.labels = topVillages.map(v => v.village);
-            state.pieChart.data.datasets[0].label = state.viewMode === 'pounds' ? 'Cane Weight (lbs)' : 'Payment Amount ($)';
-            state.pieChart.data.datasets[0].data = topVillages.map(v => state.viewMode === 'pounds' ? v.totalPounds : v.totalPayments);
-            state.pieChart.data.datasets[0].backgroundColor = topVillages.map(v => v.color);
-            state.pieChart.data.datasets[0].borderColor = topVillages.map(v => v.color);
-            state.pieChart.update();
-            
-            // Update farmer chart title
-            document.getElementById('farmerChartTitle').textContent = state.sortMode === 'village' 
-                ? 'Farmers by Village (Grouped)' 
-                : 'All Farmers (Ranked by ' + (state.viewMode === 'pounds' ? 'Cane Supply)' : 'Payments)');
-            
-            // Update farmer bar chart
-            state.farmerChart.data.labels = processed.farmerData.map(f => f.name);
-            state.farmerChart.data.datasets[0].label = state.viewMode === 'pounds' ? 'Cane Weight (lbs)' : 'Payment Amount ($)';
-            state.farmerChart.data.datasets[0].data = processed.farmerData.map(f => state.viewMode === 'pounds' ? f.pounds : f.payments);
-            state.farmerChart.data.datasets[0].backgroundColor = processed.farmerData.map(f => f.color);
-            state.farmerChart.data.datasets[0].borderColor = processed.farmerData.map(f => f.color);
-            state.farmerChart.options.scales.x.title.text = state.viewMode === 'pounds' ? 'Pounds' : 'Dollars';
-            state.farmerChart.update();
-        }
-        
-        // Event listeners
-        document.getElementById('view-pounds').addEventListener('click', function() {
-            this.classList.add('active');
-            document.getElementById('view-payments').classList.remove('active');
-            state.viewMode = 'pounds';
-            updateCharts();
-        });
-        
-        document.getElementById('view-payments').addEventListener('click', function() {
-            this.classList.add('active');
-            document.getElementById('view-pounds').classList.remove('active');
-            state.viewMode = 'payments';
-            updateCharts();
-        });
-        
-        document.getElementById('sort-village').addEventListener('click', function() {
-            this.classList.add('active');
-            document.getElementById('sort-individual').classList.remove('active');
-            state.sortMode = 'village';
-            updateCharts();
-        });
-        
-        document.getElementById('sort-individual').addEventListener('click', function() {
-            this.classList.add('active');
-            document.getElementById('sort-village').classList.remove('active');
-            state.sortMode = 'individual';
-            updateCharts();
-        });
-        
-        document.getElementById('search-input').addEventListener('input', function() {
-            state.searchTerm = this.value;
-            updateCharts();
-        });
-        
-        // Initialize app
-        window.addEventListener('DOMContentLoaded', function() {
-            initCharts();
         });
     </script>
 </body>
