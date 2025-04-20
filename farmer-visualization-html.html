@@ -40,15 +40,18 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             padding: 20px;
             margin-bottom: 20px;
+            position: relative;
         }
         
         .chart-half {
             width: calc(50% - 20px);
             min-width: 450px;
+            height: 400px;
         }
         
         .chart-full {
             width: 100%;
+            height: 800px;
         }
         
         .stats-container {
@@ -250,8 +253,8 @@
         
         <div class="stat-card">
             <div class="stat-title">Total Payments (2023-2024)</div>
-            <div class="stat-value">$262,919</div>
-            <div class="stat-subtext">avg $3,286 per farmer</div>
+            <div class="stat-value">$384,168</div>
+            <div class="stat-subtext">incl. $279,000 in 2024</div>
         </div>
         
         <div class="stat-card">
@@ -278,6 +281,9 @@
                     <span>Payments:</span>
                     <span>$105,168</span>
                 </div>
+                <div class="data-row" style="margin-top: 10px; font-size: 12px; color: #666;">
+                    <span>Note: Excludes trucking, planting and land clearing costs</span>
+                </div>
             </div>
             
             <div class="year-card">
@@ -288,7 +294,10 @@
                 </div>
                 <div class="data-row">
                     <span>Payments:</span>
-                    <span>$157,751</span>
+                    <span>$279,000</span>
+                </div>
+                <div class="data-row" style="margin-top: 10px; font-size: 12px; color: #666;">
+                    <span>Note: Excludes trucking, planting and land clearing costs</span>
                 </div>
             </div>
         </div>
@@ -301,20 +310,18 @@
     <div class="container">
         <div class="chart-container chart-half">
             <h2>Village Distribution</h2>
-            <canvas id="villageChart"></canvas>
+            <canvas id="villageChart" style="max-height: 350px;"></canvas>
         </div>
         
         <div class="chart-container chart-half">
             <h2>Top 10 Villages</h2>
-            <canvas id="pieChart"></canvas>
+            <canvas id="pieChart" style="max-height: 350px;"></canvas>
         </div>
     </div>
     
     <div class="chart-container chart-full">
         <h2 id="farmerChartTitle">Farmers by Village (Grouped)</h2>
-        <div style="position: relative; height: 800px;">
-            <canvas id="farmerChart"></canvas>
-        </div>
+        <canvas id="farmerChart" style="max-height: 700px;"></canvas>
     </div>
     
     <div class="insights">
@@ -342,6 +349,9 @@
     </div>
 
     <script>
+        // Set a fixed height for all chart containers
+        Chart.defaults.maintainAspectRatio = false;
+        
         // Raw data for all farmers
         const farmerData = [
             { name: "Gracien Fountain", village: "La Plaine", pounds: 68483, payments: 41090 },
@@ -687,7 +697,9 @@
                                     }
                                     return value;
                                 }
-                            }
+                            },
+                            // Limit the number of farmers shown to prevent excessive scrolling
+                            max: 40
                         }
                     },
                     plugins: {
@@ -702,7 +714,171 @@
                                     const formattedValue = value.toLocaleString();
                                     return [
                                         `Village: ${farmer.village}`,
-                                        `${state.viewMode === 'pounds' ? 'Cane: ' + formattedValue + ' lbs' : 'Payment: $' + formattedValue}`
+                                        `${state.viewMode === 'pounds' ? 'Cane: ' + formattedValue + ' lbs' : 'Payment: 
+        }
+        
+        // Update charts
+        function updateCharts() {
+            const processed = processData();
+            
+            // Update village bar chart
+            state.villageChart.data.labels = processed.villageTotals.map(v => v.village);
+            state.villageChart.data.datasets[0].label = state.viewMode === 'pounds' ? 'Cane Weight (lbs)' : 'Payment Amount ($)';
+            state.villageChart.data.datasets[0].data = processed.villageTotals.map(v => state.viewMode === 'pounds' ? v.totalPounds : v.totalPayments);
+            state.villageChart.data.datasets[0].backgroundColor = processed.villageTotals.map(v => v.color);
+            state.villageChart.data.datasets[0].borderColor = processed.villageTotals.map(v => v.color);
+            state.villageChart.options.scales.x.title.text = state.viewMode === 'pounds' ? 'Pounds' : 'Dollars';
+            state.villageChart.update();
+            
+            // Update pie chart
+            const topVillages = processed.villageTotals.slice(0, 10);
+            state.pieChart.data.labels = topVillages.map(v => v.village);
+            state.pieChart.data.datasets[0].label = state.viewMode === 'pounds' ? 'Cane Weight (lbs)' : 'Payment Amount ($)';
+            state.pieChart.data.datasets[0].data = topVillages.map(v => state.viewMode === 'pounds' ? v.totalPounds : v.totalPayments);
+            state.pieChart.data.datasets[0].backgroundColor = topVillages.map(v => v.color);
+            state.pieChart.data.datasets[0].borderColor = topVillages.map(v => v.color);
+            state.pieChart.update();
+            
+            // Update farmer chart title
+            document.getElementById('farmerChartTitle').textContent = state.sortMode === 'village' 
+                ? 'Farmers by Village (Grouped)' 
+                : 'All Farmers (Ranked by ' + (state.viewMode === 'pounds' ? 'Cane Supply)' : 'Payments)');
+            
+            // Update farmer bar chart (first page only)
+            const pageData = processed.farmerData.slice(0, 40); // Show only first page
+            state.farmerChart.data.labels = pageData.map(f => f.name);
+            state.farmerChart.data.datasets[0].label = state.viewMode === 'pounds' ? 'Cane Weight (lbs)' : 'Payment Amount ($)';
+            state.farmerChart.data.datasets[0].data = pageData.map(f => state.viewMode === 'pounds' ? f.pounds : f.payments);
+            state.farmerChart.data.datasets[0].backgroundColor = pageData.map(f => f.color);
+            state.farmerChart.data.datasets[0].borderColor = pageData.map(f => f.color);
+            state.farmerChart.options.scales.x.title.text = state.viewMode === 'pounds' ? 'Pounds' : 'Dollars';
+            state.farmerChart.update();
+            
+            // Update page info
+            const pageInfo = document.getElementById('page-info');
+            if (pageInfo) {
+                const maxPages = Math.ceil(processed.farmerData.length / 40);
+                pageInfo.textContent = `Page 1 of ${maxPages}`;
+            }
+        }
+        
+        // Event listeners
+        document.getElementById('view-pounds').addEventListener('click', function() {
+            this.classList.add('active');
+            document.getElementById('view-payments').classList.remove('active');
+            state.viewMode = 'pounds';
+            updateCharts();
+        });
+        
+        document.getElementById('view-payments').addEventListener('click', function() {
+            this.classList.add('active');
+            document.getElementById('view-pounds').classList.remove('active');
+            state.viewMode = 'payments';
+            updateCharts();
+        });
+        
+        document.getElementById('sort-village').addEventListener('click', function() {
+            this.classList.add('active');
+            document.getElementById('sort-individual').classList.remove('active');
+            state.sortMode = 'village';
+            updateCharts();
+        });
+        
+        document.getElementById('sort-individual').addEventListener('click', function() {
+            this.classList.add('active');
+            document.getElementById('sort-village').classList.remove('active');
+            state.sortMode = 'individual';
+            updateCharts();
+        });
+        
+        document.getElementById('search-input').addEventListener('input', function() {
+            state.searchTerm = this.value;
+            updateCharts();
+        });
+        
+        // Add pagination controls for farmer chart
+        function setupPagination() {
+            const paginationContainer = document.createElement('div');
+            paginationContainer.className = 'pagination-controls';
+            paginationContainer.style.textAlign = 'center';
+            paginationContainer.style.marginTop = '15px';
+            
+            const prevButton = document.createElement('button');
+            prevButton.textContent = 'Previous';
+            prevButton.className = 'btn';
+            prevButton.style.marginRight = '10px';
+            
+            const nextButton = document.createElement('button');
+            nextButton.textContent = 'Next';
+            nextButton.className = 'btn';
+            
+            paginationContainer.appendChild(prevButton);
+            paginationContainer.appendChild(nextButton);
+            
+            document.querySelector('.chart-full').appendChild(paginationContainer);
+            
+            let currentPage = 0;
+            const itemsPerPage = 40;
+            
+            prevButton.addEventListener('click', function() {
+                if (currentPage > 0) {
+                    currentPage--;
+                    updateFarmerChartPage();
+                }
+            });
+            
+            nextButton.addEventListener('click', function() {
+                const processed = processData();
+                const maxPages = Math.ceil(processed.farmerData.length / itemsPerPage);
+                
+                if (currentPage < maxPages - 1) {
+                    currentPage++;
+                    updateFarmerChartPage();
+                }
+            });
+            
+            function updateFarmerChartPage() {
+                const processed = processData();
+                const start = currentPage * itemsPerPage;
+                const end = start + itemsPerPage;
+                const pageData = processed.farmerData.slice(start, end);
+                
+                state.farmerChart.data.labels = pageData.map(f => f.name);
+                state.farmerChart.data.datasets[0].data = pageData.map(f => state.viewMode === 'pounds' ? f.pounds : f.payments);
+                state.farmerChart.data.datasets[0].backgroundColor = pageData.map(f => f.color);
+                state.farmerChart.data.datasets[0].borderColor = pageData.map(f => f.color);
+                state.farmerChart.update();
+                
+                // Update page indicators
+                const pageInfo = document.getElementById('page-info');
+                if (pageInfo) {
+                    const maxPages = Math.ceil(processed.farmerData.length / itemsPerPage);
+                    pageInfo.textContent = `Page ${currentPage + 1} of ${maxPages}`;
+                }
+            }
+            
+            // Add page indicator
+            const pageInfo = document.createElement('div');
+            pageInfo.id = 'page-info';
+            pageInfo.style.marginTop = '10px';
+            pageInfo.style.fontSize = '14px';
+            pageInfo.style.color = '#666';
+            paginationContainer.appendChild(pageInfo);
+            
+            // Initial update
+            const maxPages = Math.ceil(processData().farmerData.length / itemsPerPage);
+            pageInfo.textContent = `Page 1 of ${maxPages}`;
+        }
+        
+        // Initialize app
+        window.addEventListener('DOMContentLoaded', function() {
+            initCharts();
+            setupPagination();
+        });
+    </script>
+</body>
+</html>
+ + formattedValue}`
                                     ];
                                 }
                             }
