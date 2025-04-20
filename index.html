@@ -233,7 +233,7 @@
                 <div class="card-content">
                     <h3>Farmer Payment Distribution</h3>
                     <p>Review the distribution of payments to our local sugarcane farmers across different communities in Dominica.</p>
-                    <a href="farmer-payments.html" class="btn">View Farmer Data</a>
+                    <a href="farmer-payments.html" class="btn" id="farmer-link">View Farmer Data</a>
                 </div>
             </div>
             
@@ -311,5 +311,33 @@
     <footer>
         <p>© 2025 Jake's Data Visualization Projects</p>
     </footer>
+
+    <script>
+        // Debug script to verify links are working
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded successfully');
+            
+            // Check specific farmer data link
+            const farmerLink = document.getElementById('farmer-link');
+            if (farmerLink) {
+                console.log('Farmer link found: ' + farmerLink.href);
+                
+                // Add special click handler for debugging
+                farmerLink.addEventListener('click', function(e) {
+                    console.log('Farmer link clicked!');
+                    // Don't prevent default behavior, let the link work normally
+                });
+            } else {
+                console.error('Farmer link not found!');
+            }
+            
+            // List all links for verification
+            const allLinks = document.querySelectorAll('a.btn');
+            console.log('Found ' + allLinks.length + ' total links:');
+            allLinks.forEach((link, index) => {
+                console.log((index + 1) + '. ' + link.textContent + ' → ' + link.href);
+            });
+        });
+    </script>
 </body>
 </html>
