@@ -3,411 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rosalie Bay Rum - Farmer Payments</title>
-    <!-- React and ReactDOM -->
-    <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
-    <!-- Recharts -->
-    <script src="https://unpkg.com/recharts@2.1.9/umd/Recharts.min.js"></script>
-    <!-- Babel for JSX -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Farmer Payment Distribution - Rosalie Bay Rum</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            margin: 0;
-            padding: 0;
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e67e22;
+            --light-bg: #f8f9fa;
+            --dark-color: #212529;
+            --light-gray: #ecf0f1;
+            --medium-gray: #bdc3c7;
+            --text-color: #333333;
         }
-        .chart-container {
-            width: 100%;
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
             max-width: 1200px;
             margin: 0 auto;
+            padding: 20px;
+            background-color: var(--light-bg);
         }
-        @media print {
-            .chart-container {
-                width: 100%;
-                height: auto;
-            }
+        
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            margin-bottom: 30px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .placeholder {
+            width: 100%;
+            height: 300px;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-weight: bold;
+            color: #666;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: medium;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            margin-top: 40px;
+            border-top: 1px solid #ddd;
         }
     </style>
 </head>
 <body>
-    <div id="root" class="chart-container"></div>
-
-    <script type="text/babel">
-        const { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } = Recharts;
-        const { useState, useEffect } = React;
-
-        const FarmerPaymentsChart = () => {
-          const [searchTerm, setSearchTerm] = useState('');
-          const [processedData, setProcessedData] = useState([]);
-          const [villageTotals, setVillageTotals] = useState([]);
-          
-          // Raw data for all farmers from the payments document
-          const farmerPayments = [
-            { name: "Gracien Fountain", village: "La Plaine", total: 41090 },
-            { name: "Danny Newton", village: "La Plaine", total: 22457 },
-            { name: "Ashton Samuel", village: "La Plaine", total: 16453 },
-            { name: "Harris St Ville", village: "Delice/Boetica", total: 10035 },
-            { name: "Leon JnoBaptiste", village: "Reviere Cyrique", total: 6162 },
-            { name: "Brent Carty", village: "Despore", total: 8753 },
-            { name: "Charles Watty", village: "Wesley", total: 5823 },
-            { name: "Auxentius Maxime", village: "Belles", total: 11010 },
-            { name: "Jean-Charles Joseph", village: "Tranto", total: 3223 },
-            { name: "Kerdian Luke", village: "Belles", total: 5432 },
-            { name: "Barry St Rose", village: "La Plaine", total: 5100 },
-            { name: "Kenneth Charles", village: "Corona", total: 4256 },
-            { name: "Dorian Laudant", village: "Petite Soufriere", total: 8030 },
-            { name: "Patrick Espirit", village: "Despore", total: 8386 },
-            { name: "Dwayne Thomas", village: "Delice", total: 7152 },
-            { name: "Jerry Prevost", village: "La Plaine", total: 3178 },
-            { name: "Lambert Hilaire", village: "Delice", total: 4271 },
-            { name: "Rodriguez Blaize", village: "La Plaine", total: 2119 },
-            { name: "Sean George", village: "Reviere Cyrique", total: 3644 },
-            { name: "Seraphina Laurent", village: "Pond Casse", total: 3766 },
-            { name: "Everinton Phillip", village: "Wesley", total: 2288 },
-            { name: "Brenton Williams", village: "Grenville", total: 3095 },
-            { name: "Sheldon Simone", village: "La Plaine", total: 3522 },
-            { name: "Henderson Romain", village: "Rosalie", total: 4710 },
-            { name: "Julian Jeremy", village: "Wesley", total: 2827 },
-            { name: "Jenner Guiste", village: "Delice", total: 2634 },
-            { name: "Roy Espirit", village: "Belles", total: 4110 },
-            { name: "Julia Canoville", village: "Belles", total: 2191 },
-            { name: "Conly Durand", village: "Belles", total: 1899 },
-            { name: "Bernard Laurent", village: "Wesley", total: 2609 },
-            { name: "Cletus Joseph", village: "Castle Bruce", total: 5636 },
-            { name: "Edward Watty", village: "Wesley", total: 1683 },
-            { name: "Randy Laudat", village: "Petite Soufriere", total: 1708 },
-            { name: "Egbert Nelson", village: "Marigot", total: 1430 },
-            { name: "Pap Oscar", village: "Rosalie", total: 4788 },
-            { name: "Kenrick Whilshire", village: "Castle Bruce", total: 1331 },
-            { name: "Yannick George", village: "Grand fond", total: 1446 },
-            { name: "Connie Telemacque", village: "Wesley", total: 1055 },
-            { name: "Remy Joseph", village: "Marigot/Calibishie", total: 1592 },
-            { name: "Eyes Joseph", village: "Wesley", total: 1201 },
-            { name: "Alexander Richards", village: "Anse de Mai", total: 893 },
-            { name: "Joseph Jacob", village: "Wesley/Marigot", total: 1128 },
-            { name: "Kensworth Knight", village: "Wesley", total: 1082 },
-            { name: "Leban Telemacque", village: "Wesley", total: 1337 },
-            { name: "Irene Celestine", village: "Anse de Mai", total: 445 },
-            { name: "Fernita Pascal", village: "Reviere Cyrique", total: 735 },
-            { name: "Debra Mark", village: "Delice", total: 2528 },
-            { name: "Goddard Rodney", village: "Delice", total: 1904 },
-            { name: "Jean Dieuvainjahan", village: "Belles", total: 1093 },
-            { name: "Jennifer Espirit", village: "Belles", total: 2338 },
-            { name: "Cletus Challenger", village: "Castle Bruce", total: 965 },
-            { name: "Paul Carlton", village: "Wesley/Marigot", total: 1368 },
-            { name: "Bernad Isaac", village: "Anse de Mai", total: 305 },
-            { name: "Maryanne Diggs", village: "Anse de Mai", total: 887 },
-            { name: "Samuel Augustine", village: "Wesley/Woodford Hill", total: 704 },
-            { name: "Lungsford Duban", village: "Wesley", total: 1605 },
-            { name: "Nicholas Espirit", village: "Belles", total: 308 },
-            { name: "Kelvin Watty", village: "Wesley", total: 235 },
-            { name: "Carlos Challenger", village: "Belles", total: 2039 },
-            { name: "Franccess Diggs", village: "Anse de Mai", total: 544 },
-            { name: "David Robin", village: "Wesley", total: 247 },
-            { name: "Jamestia Jno Baptiste", village: "Reviere Cyrique", total: 320 },
-            { name: "Edmund Sylvester", village: "Marigot", total: 573 },
-            { name: "John Luke", village: "Belles", total: 1267 },
-            { name: "Kevin James", village: "Belles", total: 616 },
-            { name: "Anna Rose", village: "Wesley", total: 147 },
-            { name: "Lorielle Laurant", village: "Wesley", total: 280 },
-            { name: "Julitta Williams", village: "Wesley", total: 452 },
-            { name: "Charlesworth Joseph", village: "Wesley", total: 541 },
-            { name: "Verna Jacob", village: "Wesley", total: 847 },
-            { name: "Monica Espirit", village: "Belles", total: 259 },
-            { name: "Jovin Greenaway", village: "Salibia", total: 264 },
-            { name: "Prian Williams", village: "Wesley", total: 317 },
-            { name: "Vickenson Edwards", village: "Wesley", total: 236 },
-            { name: "Serge Badio", village: "Belles", total: 628 },
-            { name: "Joe Languuere", village: "Belles", total: 277 },
-            { name: "Karel white", village: "Bense", total: 98 },
-            { name: "Dyanne Pascal", village: "Reviere Cyrique", total: 93 },
-            { name: "Salim Poydore", village: "Grand fond", total: 296 },
-            { name: "Ricky Joseph", village: "Canefield", total: 812 }
-          ];
-          
-          // Village color mapping
-          const villageColors = {
-            "La Plaine": "#2a9d8f",
-            "Belles": "#e9c46a",
-            "Wesley": "#f4a261",
-            "Delice": "#e76f51",
-            "Despore": "#264653",
-            "Petite Soufriere": "#8ecae6",
-            "Anse de Mai": "#219ebc",
-            "Castle Bruce": "#023047",
-            "Reviere Cyrique": "#ffb703",
-            "Pond Casse": "#fb8500",
-            "Grand fond": "#606c38",
-            "Marigot": "#283618",
-            "Rosalie": "#dda15e",
-            "Carib Territory": "#bc6c25",
-            "Tranto": "#14213d",
-            "Grenville": "#fca311",
-            "Corona": "#e63946",
-            "Woodford Hill": "#a8dadc",
-            "Salibia": "#457b9d",
-            "Bense": "#1d3557",
-            "Canefield": "#84a98c",
-            "Boetica": "#cad2c5"
-          };
-          
-          // For villages with multiple names or "/" in the name
-          const getNormalizedVillageName = (villageName) => {
-            if (villageName.includes("/")) {
-              return villageName.split("/")[0];
-            }
-            return villageName;
-          };
-          
-          // Get village color
-          const getVillageColor = (villageName) => {
-            const normalizedName = getNormalizedVillageName(villageName);
-            return villageColors[normalizedName] || "#adb5bd";
-          };
-          
-          // Process data when inputs change
-          useEffect(() => {
-            const processData = () => {
-              let data = [...farmerPayments];
-              
-              // Filter by search term
-              if (searchTerm) {
-                const term = searchTerm.toLowerCase();
-                data = data.filter(farmer => 
-                  farmer.name.toLowerCase().includes(term) || 
-                  farmer.village.toLowerCase().includes(term)
-                );
-              }
-              
-              // Group by village
-              const villages = {};
-              data.forEach(farmer => {
-                const normalizedVillage = getNormalizedVillageName(farmer.village);
-                if (!villages[normalizedVillage]) {
-                  villages[normalizedVillage] = [];
-                }
-                villages[normalizedVillage].push(farmer);
-              });
-              
-              // Calculate village totals and sort villages by total payment
-              const villageTotalPayments = Object.keys(villages).map(village => {
-                const totalAmount = villages[village].reduce((sum, farmer) => sum + farmer.total, 0);
-                const farmerCount = villages[village].length;
-                return { 
-                  village,
-                  totalAmount,
-                  farmerCount,
-                  color: villageColors[village] || "#adb5bd"
-                };
-              }).sort((a, b) => b.totalAmount - a.totalAmount);
-              
-              setVillageTotals(villageTotalPayments);
-              
-              // Sort farmers within each village by payment amount
-              Object.keys(villages).forEach(village => {
-                villages[village].sort((a, b) => b.total - a.total);
-              });
-              
-              // Flatten the data in order of villages by total payment amount
-              const processedData = [];
-              villageTotalPayments.forEach(villageData => {
-                const villageFarmers = villages[villageData.village];
-                
-                // Add separator for the first farmer in each village
-                if (villageFarmers.length > 0) {
-                  // Add village header as a non-data element
-                  processedData.push({
-                    name: `--- ${villageData.village} - $${villageData.totalAmount.toLocaleString()} (${villageData.farmerCount} farmers) ---`,
-                    village: villageData.village,
-                    total: 0,
-                    isVillageHeader: true,
-                    color: villageData.color
-                  });
-                  
-                  // Add all farmers in this village
-                  villageFarmers.forEach(farmer => {
-                    processedData.push({
-                      ...farmer,
-                      isVillageHeader: false,
-                      color: villageData.color
-                    });
-                  });
-                }
-              });
-              
-              setProcessedData(processedData);
-            };
-            
-            processData();
-          }, [searchTerm]);
-          
-          // Custom tooltip to display additional information
-          const CustomTooltip = ({ active, payload }) => {
-            if (active && payload && payload.length) {
-              const data = payload[0].payload;
-              
-              // Don't show tooltip for village headers
-              if (data.isVillageHeader) return null;
-              
-              return (
-                <div className="bg-white p-3 border border-gray-300 rounded shadow-md">
-                  <p className="font-bold">{data.name}</p>
-                  <p>Village: {data.village}</p>
-                  <p className="text-green-600 font-semibold">Total Payment: ${data.total.toLocaleString()}</p>
-                </div>
-              );
-            }
-            return null;
-          };
-          
-          const CustomizedTick = ({ x, y, payload }) => {
-            const data = processedData.find(item => item.name === payload.value);
-            
-            if (!data) return null;
-            
-            // Style differently if this is a village header
-            if (data.isVillageHeader) {
-              return (
-                <g transform={`translate(${x},${y})`}>
-                  <text
-                    x={-5}
-                    y={0}
-                    dy={4}
-                    textAnchor="end"
-                    fill={data.color || "#333"}
-                    fontWeight="bold"
-                    fontSize={12}
-                  >
-                    {payload.value}
-                  </text>
-                </g>
-              );
-            }
-            
-            // Regular farmer name
-            return (
-              <g transform={`translate(${x},${y})`}>
-                <text
-                  x={-5}
-                  y={0}
-                  dy={4}
-                  textAnchor="end"
-                  fill="#666"
-                  fontSize={11}
-                >
-                  {payload.value}
-                </text>
-              </g>
-            );
-          };
-          
-          const CustomizedBar = (props) => {
-            const { x, y, width, height, payload } = props;
-            
-            // Skip bars for village headers
-            if (payload.isVillageHeader) {
-              return null;
-            }
-            
-            return (
-              <rect
-                x={x}
-                y={y}
-                width={width}
-                height={height}
-                fill={payload.color}
-                fillOpacity={0.8}
-                className="recharts-bar-rectangle"
-              />
-            );
-          };
-          
-          return (
-            <div className="p-4 max-w-full mx-auto bg-gray-50 rounded-lg shadow-md">
-              <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">
-                Rosalie Bay Rum - Farmer Payments with All Names Visible
-              </h1>
-              <p className="text-center mb-4 text-gray-600">
-                Villages ordered by total payments (highest to lowest) with farmers ordered by payment (highest to lowest)
-              </p>
-              
-              <div className="flex justify-center mb-4">
-                <div>
-                  <input
-                    type="text"
-                    placeholder="Search farmer or village..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="border rounded px-3 py-1 w-64"
-                  />
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                {villageTotals.slice(0, 3).map((village, index) => (
-                  <div key={village.village} className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-bold" style={{ color: village.color }}>{index + 1}. {village.village}</h3>
-                      <span className="text-xl font-bold">${village.totalAmount.toLocaleString()}</span>
-                    </div>
-                    <p className="text-sm text-gray-600">{village.farmerCount} farmers</p>
-                  </div>
-                ))}
-              </div>
-              
-              <div className="bg-white p-4 rounded-lg shadow mb-4 relative">
-                <ResponsiveContainer width="100%" height={Math.max(600, processedData.length * 30)}>
-                  <BarChart
-                    data={processedData}
-                    layout="vertical"
-                    margin={{ top: 5, right: 30, left: 250, bottom: 5 }}
-                    barSize={16}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis 
-                      type="number"
-                      tickFormatter={(value) => `$${value.toLocaleString()}`}
-                    />
-                    <YAxis 
-                      type="category" 
-                      dataKey="name" 
-                      width={240}
-                      tick={<CustomizedTick />}
-                      interval={0} // Force showing every tick
-                    />
-                    <Tooltip content={<CustomTooltip />} />
-                    <Bar 
-                      dataKey="total" 
-                      name="Payment Amount" 
-                      shape={<CustomizedBar />}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              
-              <div className="bg-white p-4 rounded-lg shadow">
-                <h2 className="text-xl font-semibold mb-2">Payment Distribution Insights:</h2>
-                <ul className="list-disc pl-6 space-y-1">
-                  <li>La Plaine is the dominant village with ${villageTotals[0]?.totalAmount.toLocaleString()} in total payments</li>
-                  <li>The top 3 villages account for {Math.round((villageTotals.slice(0, 3).reduce((sum, v) => sum + v.totalAmount, 0) / villageTotals.reduce((sum, v) => sum + v.totalAmount, 0)) * 100)}% of all payments</li>
-                  <li>Within villages, there's typically a top farmer who receives significantly more than others</li>
-                  <li>La Plaine has both the highest total payments and the highest individual farmer payments</li>
-                  <li>Smaller villages often have more even payment distribution among farmers</li>
-                </ul>
-                
-                <div className="mt-4 text-sm text-gray-500">
-                  <p>* Colors represent different villages</p>
-                  <p>* Payment totals are calculated from available 2023-2024 payment records</p>
-                </div>
-              </div>
-            </div>
-          );
-        };
-
-        ReactDOM.render(<FarmerPaymentsChart />, document.getElementById('root'));
-    </script>
+    <header>
+        <h1>Farmer Payment Distribution</h1>
+        <p class="subtitle">Analysis of payments to local sugarcane farmers</p>
+    </header>
+    
+    <div class="content">
+        <h2>Farmer Payment Analysis</h2>
+        <p>This page displays the distribution of payments to our network of local sugarcane farmers throughout Dominica. The data shows payment patterns across different villages and individual farmers.</p>
+        
+        <div class="placeholder">Farmer Payment Visualization Goes Here</div>
+        
+        <h3>Key Insights</h3>
+        <ul>
+            <li>La Plaine leads with approximately $76,000 in payments</li>
+            <li>The top 3 villages account for about 60% of all payments</li>
+            <li>La Plaine has both the highest total payments and individual farmer payments</li>
+            <li>Smaller villages have more even payment distribution among farmers</li>
+        </ul>
+        
+        <div class="placeholder">Village Distribution Chart</div>
+        
+        <a href="index.html" class="btn">Back to Home</a>
+    </div>
+    
+    <footer>
+        <p>© 2025 Rosalie Bay Rum Data Visualizations</p>
+    </footer>
 </body>
 </html>
