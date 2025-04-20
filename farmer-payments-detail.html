@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rosalie Bay Rum - Individual Farmer Payments</title>
+    
+    <!-- Chart.js from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        h1, h2 {
+            color: #2a5555;
+            text-align: center;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+        }
+        
+        .stat-title {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .stat-subtext {
+            color: #888;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        .village-section {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .village-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .village-name {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .village-total {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .farmer-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .farmer-table th {
+            text-align: left;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .farmer-table td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .payment-cell {
+            text-align: right;
+            font-weight: bold;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .back-link {
+            padding: 8px 15px;
+            background-color: #2a5555;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        
+        @media (max-width: 768px) {
+            .village-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .village-total {
+                margin-top: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <a href="farmer-visualization-html.html" class="back-link">← Back to Overview</a>
+    </div>
+    
+    <h1>Rosalie Bay Rum - Individual Farmer Payments</h1>
+    <p class="subtitle">Detailed breakdown of all payments to farmers (2023-2024)</p>
+    
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-title">Total Farmers</div>
+            <div class="stat-value">80</div>
+            <div class="stat-subtext">across 20 villages</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-title">Total Payments (2023-2024)</div>
+            <div class="stat-value">$384,168</div>
+            <div class="stat-subtext">incl. $279,000 in 2024</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-title">Average Payment</div>
+            <div class="stat-value">$4,802</div>
+            <div class="stat-subtext">per farmer</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-title">Payment Range</div>
+            <div class="stat-value">$93 - $41,090</div>
+            <div class="stat-subtext">min - max</div>
+        </div>
+    </div>
+    
+    <input type="text" id="searchInput" class="search-box" placeholder="Search for farmer or village...">
+    
+    <div id="villageContainer">
+        <!-- Village sections will be inserted here by JavaScript -->
+    </div>
+    
+    <script>
+        // Raw data for all farmers
+        const farmerData = [
+            { name: "Gracien Fountain", village: "La Plaine", pounds: 68483, payments: 41090 },
+            { name: "Danny Newton", village: "La Plaine", pounds: 37428, payments: 22457 },
+            { name: "Ashton Samuel", village: "La Plaine", pounds: 27421, payments: 16453 },
+            { name: "Harris St Ville", village: "Delice/Boetica", pounds: 16725, payments: 10035 },
+            { name: "Leon JnoBaptiste", village: "Reviere Cyrique", pounds: 10270, payments: 6162 },
+            { name: "Brent Carty", village: "Despore", pounds: 14588, payments: 8753 },
+            { name: "Charles Watty", village: "Wesley", pounds: 9705, payments: 5823 },
+            { name: "Auxentius Maxime", village: "Belles", pounds: 18350, payments: 11010 },
+            { name: "Jean-Charles Joseph", village: "Tranto", pounds: 5372, payments: 3223 },
+            { name: "Kerdian Luke", village: "Belles", pounds: 9053, payments: 5432 },
+            { name: "Barry St Rose", village: "La Plaine", pounds: 8500, payments: 5100 },
+            { name: "Kenneth Charles", village: "Corona", pounds: 7093, payments: 4256 },
+            { name: "Dorian Laudant", village: "Petite Soufriere", pounds: 13383, payments: 8030 },
+            { name: "Patrick Espirit", village: "Despore", pounds: 13976, payments: 8386 },
+            { name: "Dwayne Thomas", village: "Delice", pounds: 11920, payments: 7152 },
+            { name: "Jerry Prevost", village: "La Plaine", pounds: 5296, payments: 3178 },
+            { name: "Lambert Hilaire", village: "Delice", pounds: 7118, payments: 4271 },
+            { name: "Rodriguez Blaize", village: "La Plaine", pounds: 3531, payments: 2119 },
+            { name: "Sean George", village: "Reviere Cyrique", pounds: 6073, payments: 3644 },
+            { name: "Seraphina Laurent", village: "Pond Casse", pounds: 6276, payments: 3766 },
+            { name: "Everinton Phillip", village: "Wesley", pounds: 3813, payments: 2288 },
+            { name: "Brenton Williams", village: "Grenville", pounds: 5158, payments: 3095 },
+            { name: "Sheldon Simone", village: "La Plaine", pounds: 5870, payments: 3522 },
+            { name: "Henderson Romain", village: "Rosalie", pounds: 7850, payments: 4710 },
+            { name: "Julian Jeremy", village: "Wesley", pounds: 4711, payments: 2827 },
+            { name: "Jenner Guiste", village: "Delice", pounds: 4390, payments: 2634 },
+            { name: "Roy Espirit", village: "Belles", pounds: 6850, payments: 4110 },
+            { name: "Julia Canoville", village: "Belles", pounds: 3652, payments: 2191 },
+            { name: "Conly Durand", village: "Belles", pounds: 3165, payments: 1899 },
+            { name: "Bernard Laurent", village: "Wesley", pounds: 4348, payments: 2609 },
+            { name: "Cletus Joseph", village: "Castle Bruce", pounds: 9393, payments: 5636 },
+            { name: "Edward Watty", village: "Wesley", pounds: 2805, payments: 1683 },
+            { name: "Randy Laudat", village: "Petite Soufriere", pounds: 2846, payments: 1708 },
+            { name: "Egbert Nelson", village: "Marigot", pounds: 2383, payments: 1430 },
+            { name: "Pap Oscar", village: "Rosalie", pounds: 7980, payments: 4788 },
+            { name: "Kenrick Whilshire", village: "Castle Bruce", pounds: 2218, payments: 1331 },
+            { name: "Yannick George", village: "Grand fond", pounds: 2410, payments: 1446 },
+            { name: "Connie Telemacque", village: "Wesley", pounds: 1759, payments: 1055 },
+            { name: "Remy Joseph", village: "Marigot/Calibishie", pounds: 2653, payments: 1592 },
+            { name: "Eyes Joseph", village: "Wesley", pounds: 2002, payments: 1201 },
+            { name: "Alexander Richards", village: "Anse de Mai", pounds: 1488, payments: 893 },
+            { name: "Joseph Jacob", village: "Wesley/Marigot", pounds: 1880, payments: 1128 },
+            { name: "Kensworth Knight", village: "Wesley", pounds: 1803, payments: 1082 },
+            { name: "Leban Telemacque", village: "Wesley", pounds: 2228, payments: 1337 },
+            { name: "Irene Celestine", village: "Anse de Mai", pounds: 741, payments: 445 },
+            { name: "Fernita Pascal", village: "Reviere Cyrique", pounds: 1225, payments: 735 },
+            { name: "Debra Mark", village: "Delice", pounds: 4213, payments: 2528 },
+            { name: "Goddard Rodney", village: "Delice", pounds: 3173, payments: 1904 },
+            { name: "Jean Dieuvainjahan", village: "Belles", pounds: 1822, payments: 1093 },
+            { name: "Jennifer Espirit", village: "Belles", pounds: 3896, payments: 2338 },
+            { name: "Cletus Challenger", village: "Castle Bruce", pounds: 1608, payments: 965 },
+            { name: "Paul Carlton", village: "Wesley/Marigot", pounds: 2280, payments: 1368 },
+            { name: "Bernad Isaac", village: "Anse de Mai", pounds: 509, payments: 305 },
+            { name: "Maryanne Diggs", village: "Anse de Mai", pounds: 1478, payments: 887 },
+            { name: "Samuel Augustine", village: "Wesley/Woodford Hill", pounds: 1173, payments: 704 },
+            { name: "Lungsford Duban", village: "Wesley", pounds: 2675, payments: 1605 },
+            { name: "Nicholas Espirit", village: "Belles", pounds: 514, payments: 308 },
+            { name: "Kelvin Watty", village: "Wesley", pounds: 391, payments: 235 },
+            { name: "Carlos Challenger", village: "Belles", pounds: 3399, payments: 2039 },
+            { name: "Franccess Diggs", village: "Anse de Mai", pounds: 907, payments: 544 },
+            { name: "David Robin", village: "Wesley", pounds: 412, payments: 247 },
+            { name: "Jamestia Jno Baptiste", village: "Reviere Cyrique", pounds: 533, payments: 320 },
+            { name: "Edmund Sylvester", village: "Marigot", pounds: 955, payments: 573 },
+            { name: "John Luke", village: "Belles", pounds: 2111, payments: 1267 },
+            { name: "Kevin James", village: "Belles", pounds: 1027, payments: 616 },
+            { name: "Anna Rose", village: "Wesley", pounds: 245, payments: 147 },
+            { name: "Lorielle Laurant", village: "Wesley", pounds: 466, payments: 280 },
+            { name: "Julitta Williams", village: "Wesley", pounds: 452, payments: 271 },
+            { name: "Charlesworth Joseph", village: "Wesley", pounds: 901, payments: 541 },
+            { name: "Verna Jacob", village: "Wesley", pounds: 1412, payments: 847 },
+            { name: "Monica Espirit", village: "Belles", pounds: 431, payments: 259 },
+            { name: "Jovin Greenaway", village: "Salibia", pounds: 440, payments: 264 },
+            { name: "Prian Williams", village: "Wesley", pounds: 528, payments: 317 },
+            { name: "Vickenson Edwards", village: "Wesley", pounds: 393, payments: 236 },
+            { name: "Serge Badio", village: "Belles", pounds: 1047, payments: 628 },
+            { name: "Joe Languuere", village: "Belles", pounds: 461, payments: 277 },
+            { name: "Karel white", village: "Bense", pounds: 163, payments: 98 },
+            { name: "Dyanne Pascal", village: "Reviere Cyrique", pounds: 155, payments: 93 },
+            { name: "Salim Poydore", village: "Grand fond", pounds: 493, payments: 296 },
+            { name: "Ricky Joseph", village: "Canefield", pounds: 1354, payments: 812 }
+        ];
+        
+        // Village color mapping
+        const villageColors = {
+            "La Plaine": "#2a9d8f",
+            "Belles": "#e9c46a",
+            "Wesley": "#f4a261",
+            "Delice": "#e76f51",
+            "Despore": "#264653",
+            "Petite Soufriere": "#8ecae6",
+            "Anse de Mai": "#219ebc",
+            "Castle Bruce": "#023047",
+            "Reviere Cyrique": "#ffb703",
+            "Pond Casse": "#fb8500",
+            "Grand fond": "#606c38",
+            "Marigot": "#283618",
+            "Rosalie": "#dda15e",
+            "Tranto": "#14213d",
+            "Grenville": "#fca311",
+            "Corona": "#e63946",
+            "Woodford Hill": "#a8dadc",
+            "Salibia": "#457b9d",
+            "Bense": "#1d3557",
+            "Canefield": "#84a98c",
+            "Boetica": "#cad2c5",
+            "Calibishie": "#bc6c25"
+        };
+        
+        // For villages with multiple names or "/" in the name
+        function getNormalizedVillageName(villageName) {
+            if (villageName.includes("/")) {
+                return villageName.split("/")[0];
+            }
+            return villageName;
+        }
+        
+        // Get village color
+        function getVillageColor(villageName) {
+            const normalizedName = getNormalizedVillageName(villageName);
+            return villageColors[normalizedName] || "#adb5bd";
+        }
+        
+        // Process and group the data by village
+        function processData() {
+            // Group farmers by village
+            const villages = {};
+            
+            farmerData.forEach(farmer => {
+                const normalizedVillage = getNormalizedVillageName(farmer.village);
+                
+                if (!villages[normalizedVillage]) {
+                    villages[normalizedVillage] = {
+                        farmers: [],
+                        totalPayments: 0,
+                        totalPounds: 0,
+                        color: getVillageColor(normalizedVillage)
+                    };
+                }
+                
+                villages[normalizedVillage].farmers.push(farmer);
+                villages[normalizedVillage].totalPayments += farmer.payments;
+                villages[normalizedVillage].totalPounds += farmer.pounds;
+            });
+            
+            // Sort farmers within each village by payment amount (descending)
+            Object.keys(villages).forEach(village => {
+                villages[village].farmers.sort((a, b) => b.payments - a.payments);
+            });
+            
+            // Convert to array and sort villages by total payments (descending)
+            return Object.keys(villages)
+                .map(village => ({
+                    name: village,
+                    ...villages[village]
+                }))
+                .sort((a, b) => b.totalPayments - a.totalPayments);
+        }
+        
+        // Render the village sections
+        function renderVillageSections(villageData) {
+            const container = document.getElementById('villageContainer');
+            container.innerHTML = ''; // Clear container
+            
+            if (villageData.length === 0) {
+                container.innerHTML = '<p style="text-align: center; padding: 20px;">No results found. Please try a different search term.</p>';
+                return;
+            }
+            
+            villageData.forEach(village => {
+                const section = document.createElement('div');
+                section.className = 'village-section';
+                section.style.borderLeft = `5px solid ${village.color}`;
+                
+                const header = document.createElement('div');
+                header.className = 'village-header';
+                header.innerHTML = `
+                    <div class="village-name">${village.name} (${village.farmers.length} farmers)</div>
+                    <div class="village-total">Total: $${village.totalPayments.toLocaleString()}</div>
+                `;
+                
+                const table = document.createElement('table');
+                table.className = 'farmer-table';
+                
+                // Table header
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th style="width: 60%;">Farmer</th>
+                            <th style="width: 20%;">Pounds</th>
+                            <th style="width: 20%;">Payment</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${village.farmers.map((farmer, index) => `
+                            <tr>
+                                <td>${index + 1}. ${farmer.name}</td>
+                                <td>${farmer.pounds.toLocaleString()} lbs</td>
+                                <td class="payment-cell">$${farmer.payments.toLocaleString()}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                `;
+                
+                section.appendChild(header);
+                section.appendChild(table);
+                container.appendChild(section);
+            });
+        }
+        
+        // Handle search functionality
+        function handleSearch() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const processedData = processData();
+            
+            if (!searchTerm) {
+                renderVillageSections(processedData);
+                return;
+            }
+            
+            // Filter villages and farmers based on search term
+            const filteredData = processedData
+                .map(village => {
+                    // Filter farmers within the village
+                    const filteredFarmers = village.farmers.filter(farmer => 
+                        farmer.name.toLowerCase().includes(searchTerm)
+                    );
+                    
+                    // Return village with filtered farmers, or null if no matches
+                    if (filteredFarmers.length > 0) {
+                        return {
+                            ...village,
+                            farmers: filteredFarmers,
+                            totalPayments: filteredFarmers.reduce((sum, farmer) => sum + farmer.payments, 0),
+                            totalPounds: filteredFarmers.reduce((sum, farmer) => sum + farmer.pounds, 0)
+                        };
+                    }
+                    
+                    return null;
+                })
+                .filter(village => 
+                    village !== null || 
+                    village.name.toLowerCase().includes(searchTerm)
+                );
+            
+            renderVillageSections(filteredData);
+        }
+        
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            const processedData = processData();
+            renderVillageSections(processedData);
+            
+            // Add search functionality
+            document.getElementById('searchInput').addEventListener('input', handleSearch);
+        });
+    </script>
+</body>
+</html>
