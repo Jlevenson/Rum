@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fermentation Gravity Chart</title>
+  
+  <!-- Load React -->
+  <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+  
+  <!-- Load Recharts -->
+  <script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
+  
+  <!-- Load Babel for JSX -->
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .fermentation-chart-container {
+      width: 100%;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" class="container mx-auto p-4"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+    const { 
+      ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, 
+      Tooltip, Legend, ReferenceLine 
+    } = Recharts;
+
+    function FermentationChart() {
+      // State for storing our data
+      const [data, setData] = useState({});
+      const [loading, setLoading] = useState(true);
+      const [error, setError] = useState(null);
+      const [selectedFermentations, setSelectedFermentations] = useState([]);
+      const [viewMode, setViewMode] = useState('individual');
+      const [showStats, setShowStats] = useState(false);
+      const [filterMode, setFilterMode] = useState('all'); // 'all', 'complete', 'incomplete'
+      const [searchTerm, setSearchTerm] = useState('');
+      
+      // Color palette for the different fermentation lines
+      const colors = [
+        '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', 
+        '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
+        '#aec7e8', '#ffbb78', '#98df8a', '#ff9896', '#c5b0d5',
+        '#c49c94', '#f7b6d2', '#dbdb8d', '#9edae5', '#f7b6d2',
+        '#c7c7c7', '#c5b0d5', '#9467bd', '#8c564b', '#e377c2',
+        '#7f7f7f', '#bcbd22', '#17becf', '#aec7e8', '#ffbb78',
+        '#98df8a', '#ff9896'
+      ];
+    
+      // Effect to set up our data
+      useEffect(() => {
+        const setupData = async () => {
+          try {
+            // Define hours
+            const hours = [0, 12, 24, 36, 48, 60, 72, 84, 96, 108, 120, 132];
+            
+            // Raw data from the table
+            const rawReadings = [
+              // hour 0 readings
+              [1.065, 1.065, 1.05, 1.06, 1.056, 1.06, 1.064, 1.061, 1.07, 1.063, 1.064, 1.067, 1.06, 1.06, 1.042, 1.045, 1.05, 1.05, 1.053, 1.053, 1.055, 1.055, 1.055, 1.047, 1.045, 1.053, 1.05, 1.055, 1.05, 1.06, 1.06],
+              // hour 12 readings
+              [1.07, 1.065, 1.06, 1.05, 1.045, 1.055, 1.06, 1.062, 1.048, 1.065, 1.052, 1.054, 1.06, 1.05, 1.054, 1.03, 1.035, 1.04, 1.04, 1.045, 1.043, 1.045, 1.04, 1.045, 1.034, 1.038, 1.04, 1.035, 1.035, 1.045, 1.04, 1.04],
+              // hour 24 readings
+              [1.05, 1.06, 1.056, 1.04, 1.035, 1.05, 1.032, 1.056, 1.051, 1.04, 1.06, 1.045, 1.049, 1.048, 1.044, 1.045, 1.02, 1.024, 1.035, 1.03, 1.038, 1.03, 1.03, 1.035, 1.03, 1.025, 1.025, 1.03, 1.025, 1.025, 1.035, 1.035, 1.033],
+              // hour 36 readings
+              [1.04, 1.05, 1.05, 1.03, 1.02, 1.03, 1.027, 1.043, 1.036, 1.026, 1.045, 1.032, 1.04, 1.04, 1.03, 1.04, 1.015, 1.019, 1.025, 1.02, 1.03, 1.026, 1.025, 1.03, 1.025, 1.015, 1.015, 1.025, 1.02, 1.02, 1.02, 1.025, 1.025],
+              // hour 48 readings
+              [1.03, 1.04, 1.045, 1.025, 1.02, 1.025, 1.025, 1.038, 1.03, 1.024, 1.045, 1.024, 1.035, 1.034, 1.028, 1.035, 1.013, 1.016, 1.019, 1.018, 1.026, 1.02, 1.022, 1.027, 1.024, 1.015, 1.015, 1.02, 1.017, 1.015, 1.02, 1.02, 1.02],
+              // hour 60 readings
+              [1.03, 1.035, 1.04, 1.02, 1.015, 1.02, 1.025, 1.029, 1.026, 1.021, 1.034, 1.023, 1.023, 1.029, 1.019, 1.025, 1.011, 1.015, 1.015, 1.015, 1.02, 1.018, 1.02, 1.025, 1.02, 1.015, 1.015, 1.02, 1.015, 1.015, 1.02, 1.02, 1.02],
+              // hour 72 readings (fix the error in #01)
+              [1.02, 1.0334, 1.035, 1.02, 1.015, 1.02, 1.024, 1.024, 1.02, 1.03, 1.019, 1.019, 1.025, 1.019, 1.023, 1.011, 1.01, 1.013, 1.01, 1.02, 1.015, 1.017, 1.02, 1.018, 1.015, 1.015, 1.017, 1.015, 1.015, 1.02, 1.02, 1.02],
+              // hour 84 readings
+              [1.02, 1.025, 1.033, 1.02, 1.015, 1.02, 1.024, 1.024, 1.02, 1.028, 1.019, 1.019, 1.024, 1.019, 1.019, 1.01, 1.01, 1.012, 1.01, 1.012, 1.015, 1.015, 1.015, 1.015, 1.015, 1.015, 1.02, 1.02, 1.02],
+              // hour 96 readings
+              [1.015, 1.025, 1.033, 1.02, 1.015, 1.02, 1.024, 1.024, 1.026, 1.019, 1.019, 1.024, 1.019, 1.019, 1.01, 1.01, 1.01, 1.015, 1.015, 1.015, 1.015, 1.02],
+              // hour 108 readings
+              [1.02, 1.02, 1.024, 1.02, 1.015, 1.02, 1.024, 1.024, 1.025, 1.01, 1.01, 1.015, 1.015, 1.02, 1.02, 1.02],
+              // hour 120 readings
+              [1.024, 1.02, 1.015, 1.02, 1.015, 1.02, 1.024, 1.024, 1.023, 1.015, 1.015, 1.02, 1.02, 1.02],
+              // hour 132 readings
+              [1.02, 1.02, 1.015, 1.02, 1.015, 1.02, 1.023, 1.015, 1.015, 1.02, 1.02, 1.015, 1.015, 1.02, 1.02, 1.02, 1.015, 1.02, 1.02, 1.015, 1.015]
+            ];
+            
+            // Add the molasses fermentation data
+            // M-1-25 fermentation data with hours converted from the date/time
+            const molassesData = [
+              { hour: 0, gravity: 1.078, temp: 85.3, pH: 5.35 },  // 4/17/25 14:30
+              { hour: 18.4, gravity: 1.065, temp: 89.5, pH: 4.63 }, // 4/18/25 8:54
+              { hour: 27.13, gravity: 1.065, temp: 83.8, pH: 5.52 }, // 4/18/25 17:38
+              { hour: 40.95, gravity: 1.06, temp: 86.5, pH: 5.56 }, // 4/19/25 7:27
+              { hour: 48.27, gravity: 1.069, temp: null, pH: 5.98 }, // 4/19/25 14:46
+              { hour: 64.5, gravity: 1.045, temp: 90, pH: 6.27 }, // 4/20/25 7:00
+              { hour: 74.5, gravity: 1.04, temp: 90, pH: 5.64 }, // 4/20/25 17:00
+              { hour: 88.5, gravity: 1.04, temp: 92.1, pH: 6.04 }, // 4/21/25 7:00
+              { hour: 112.65, gravity: 1.035, temp: 87.5, pH: 5.79 }, // 4/22/25 7:09
+              { hour: 120.18, gravity: 1.03, temp: 89.6, pH: 5.97 }, // 4/22/25 14:41
+              { hour: 139.97, gravity: 1.025, temp: 85.6, pH: 5.87 } // 4/23/25 10:32
+            ];
+            
+            // Create fermentation numbers from 00 to 32
+            const allFermNumbers = Array.from({length: 33}, (_, i) => i.toString().padStart(2, '0'));
+            
+            // Add molasses fermentation identifier
+            const molassesFermId = "M-1-25";
+            
+            // Organize data by fermentation
+            const dataByFerm = {};
+            
+            // Add projected data points for molasses fermentation
+            const lastMolassesReading = molassesData[molassesData.length - 1];
+            const projectedMolassesData = [...molassesData];
+            
+            // Add projected points if the fermentation isn't complete
+            if (lastMolassesReading.gravity > 1.015) {
+              // Add projections until it reaches 1.015 (approximately final gravity)
+              let currentHour = lastMolassesReading.hour;
+              let currentGravity = lastMolassesReading.gravity;
+              const dropRate = 0.002; // Gravity drop per 24 hours, estimated based on current trend
+              
+              while (currentGravity > 1.015) {
+                currentHour += 24;
+                currentGravity -= dropRate;
+                if (currentGravity < 1.015) currentGravity = 1.015;
+                
+                projectedMolassesData.push({
+                  hour: currentHour,
+                  gravity: currentGravity,
+                  projected: true
+                });
+              }
+            }
+            
+            // Add molasses data to the data structure
+            dataByFerm[molassesFermId] = projectedMolassesData;
+            
+            // Process regular fermentations - create a dataset for each fermentation
+            allFermNumbers.forEach((fermNumber, fermIndex) => {
+              const readings = [];
+              
+              hours.forEach((hour, hourIndex) => {
+                if (hourIndex < rawReadings.length && fermIndex < rawReadings[hourIndex].length) {
+                  const gravity = rawReadings[hourIndex][fermIndex];
+                  if (gravity !== null && gravity !== undefined) {
+                    readings.push({ hour, gravity });
+                  }
+                }
+              });
+              
+              if (readings.length > 0) {
+                dataByFerm[fermNumber] = readings;
+              }
+            });
+            
+            // Get fermentation numbers that have data
+            const fermsWithData = [...allFermNumbers.filter(fermNumber => 
+              dataByFerm[fermNumber] && dataByFerm[fermNumber].length > 0
+            ), molassesFermId];
+            
+            // Calculate statistics for each fermentation
+            const attenuationData = fermsWithData.map(fermNumber => {
+              const fermData = dataByFerm[fermNumber];
+              if (!fermData) return null;
+              
+              const realReadings = fermData.filter(d => !d.projected);
+              const allReadings = fermData;
+              
+              const startGravity = fermNumber === molassesFermId 
+                ? allReadings[0]?.gravity 
+                : allReadings.find(d => d.hour === 0)?.gravity;
+                
+              const sortedByHour = [...allReadings].sort((a, b) => b.hour - a.hour);
+              const sortedRealByHour = [...realReadings].sort((a, b) => b.hour - a.hour);
+              
+              const lastReading = sortedByHour[0];
+              const lastRealReading = sortedRealByHour[0];
+              
+              const endGravity = lastReading?.gravity;
+              const maxHour = lastReading?.hour;
+              const realEndGravity = lastRealReading?.gravity;
+              const realMaxHour = lastRealReading?.hour;
+              
+              let attenuation = null;
+              if (startGravity && endGravity) {
+                attenuation = ((startGravity - endGravity) / (startGravity - 1)) * 100;
+              }
+              
+              return {
+                fermNumber,
+                startGravity,
+                endGravity,
+                maxHour,
+                realEndGravity,
+                realMaxHour,
+                attenuation,
+                readings: realReadings.length,
+                isMolasses: fermNumber === molassesFermId,
+                hasProjections: realReadings.length !== allReadings.length
+              };
+            }).filter(data => data !== null);
+            
+            // Calculate aggregate data (min, max, avg) for each hour
+            const aggregateData = hours.map(hour => {
+              const gravityValues = Object.values(dataByFerm)
+                .flatMap(readings => readings.filter(r => r.hour === hour).map(r => r.gravity))
+                .filter(g => g !== undefined && g !== null);
+              
+              if (gravityValues.length === 0) {
+                return { hour, avg: null, min: null, max: null };
+              }
+              
+              const avg = gravityValues.reduce((sum, val) => sum + val, 0) / gravityValues.length;
+              const min = Math.min(...gravityValues);
+              const max = Math.max(...gravityValues);
+              
+              return {
+                hour,
+                avg,
+                min,
+                max,
+                count: gravityValues.length
+              };
+            }).filter(point => point.avg !== null);
+            
+            // Calculate overall statistics
+            const allGravityValues = Object.values(dataByFerm)
+              .flatMap(readings => readings.filter(r => !r.projected).map(r => r.gravity))
+              .filter(g => g !== undefined && g !== null);
+    
+            const minGravity = Math.min(...allGravityValues);
+            const maxGravity = Math.max(...allGravityValues);
+            const avgGravity = allGravityValues.reduce((sum, val) => sum + val, 0) / allGravityValues.length;
+            
+            // Set the data in state
+            setData({
+              fermNumbers: fermsWithData,
+              dataByFerm,
+              attenuationData,
+              aggregateData,
+              statistics: {
+                minGravity,
+                maxGravity,
+                avgGravity
+              }
+            });
+            
+            // Set the molasses fermentation and a few others as default selected
+            setSelectedFermentations([molassesFermId, ...fermsWithData.filter(f => f !== molassesFermId).slice(0, 3)]);
+            setLoading(false);
+          } catch (err) {
+            console.error("Error setting up data:", err);
+            setError("Failed to load fermentation data");
+            setLoading(false);
+          }
+        };
+        
+        setupData();
+      }, []);
+      
+      // Filter fermentations based on filter mode and search term
+      const getFilteredFermentations = () => {
+        if (!data.fermNumbers) return [];
+        
+        let filtered = [...data.fermNumbers];
+        
+        // Apply filter mode
+        if (filterMode === 'complete') {
+          // Fermentations that have reached at least 108 hours
+          filtered = filtered.filter(fermNumber => {
+            const fermData = data.attenuationData.find(f => f.fermNumber === fermNumber);
+            return fermData && fermData.maxHour >= 108;
+          });
+        } else if (filterMode === 'incomplete') {
+          // Fermentations that haven't reached 108 hours
+          filtered = filtered.filter(fermNumber => {
+            const fermData = data.attenuationData.find(f => f.fermNumber === fermNumber);
+            return fermData && fermData.maxHour < 108;
+          });
+        }
+        
+        // Apply search term
+        if (searchTerm) {
+          filtered = filtered.filter(fermNumber => 
+            fermNumber.includes(searchTerm)
+          );
+        }
+        
+        return filtered;
+      };
+      
+      // Toggle a fermentation selection
+      const toggleFermentation = (fermNumber) => {
+        if (selectedFermentations.includes(fermNumber)) {
+          setSelectedFermentations(selectedFermentations.filter(f => f !== fermNumber));
+        } else {
+          setSelectedFermentations([...selectedFermentations, fermNumber]);
+        }
+      };
+      
+      // Select all fermentations
+      const selectAllFermentations = () => {
+        setSelectedFermentations([...getFilteredFermentations()]);
+      };
+      
+      // Clear all selected fermentations
+      const clearSelectedFermentations = () => {
+        setSelectedFermentations([]);
+      };
+    
+      // Format the gravity for display
+      const formatGravity = (value) => {
+        return value ? value.toFixed(4) : 'N/A';
+      };
+      
+      // Format attenuation percentage
+      const formatAttenuation = (value) => {
+        return value ? value.toFixed(1) + '%' : 'N/A';
+      };
+    
+      // Custom tooltip for the chart
+      const CustomTooltip = ({ active, payload, label }) => {
+        if (active && payload && payload.length) {
+          if (viewMode === 'individual') {
+            return (
+              <div className="bg-white p-3 border border-gray-300 rounded shadow-md">
+                <p className="font-semibold">Hour: {label}</p>
+                {payload.map((entry, index) => (
+                  <p key={index} style={{ color: entry.color }}>
+                    {entry.name}: {formatGravity(entry.value)}
+                  </p>
+                ))}
+              </div>
+            );
+          } else {
+            // Aggregate view tooltip
+            return (
+              <div className="bg-white p-3 border border-gray-300 rounded shadow-md">
+                <p className="font-semibold">Hour: {label}</p>
+                <p style={{ color: '#2ca02c' }}>Average: {formatGravity(payload.find(p => p.dataKey === 'avg')?.value)}</p>
+                <p style={{ color: '#d62728' }}>Min: {formatGravity(payload.find(p => p.dataKey === 'min')?.value)}</p>
+                <p style={{ color: '#1f77b4' }}>Max: {formatGravity(payload.find(p => p.dataKey === 'max')?.value)}</p>
+              </div>
+            );
+          }
+        }
+        return null;
+      };
+    
+      // Render loading state
+      if (loading) {
+        return <div className="flex items-center justify-center h-64">Loading fermentation data...</div>;
+      }
+    
+      // Render error state
+      if (error) {
+        return <div className="text-red-500 p-4">{error}</div>;
+      }
+    
+      // Calculate the filtered fermentations
+      const filteredFermentations = getFilteredFermentations();
+    
+      return (
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-2">
+            <h1 className="text-2xl font-bold mb-2">Fermentation Gravity Over Time</h1>
+            <div className="flex items-center mt-1">
+              <div className="flex items-center gap-2 mr-4">
+                <span className="inline-block w-3 h-3 bg-red-500 rounded-full"></span>
+                <span className="font-medium">Molasses Fermentation</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="inline-block w-12 h-1 bg-red-500 rounded-full"></span>
+                <span className="font-medium">Actual</span>
+              </div>
+              <div className="flex items-center gap-2 ml-3">
+                <span className="inline-block w-12 h-1 bg-red-500 rounded-full" style={{ borderStyle: 'dashed', borderWidth: '2px', background: 'none', borderColor: '#FF0000' }}></span>
+                <span className="font-medium">Projected</span>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-4 items-center">
+              <div className="flex items-center gap-2">
+                <label htmlFor="viewMode" className="font-medium">View Mode:</label>
+                <select 
+                  id="viewMode" 
+                  value={viewMode} 
+                  onChange={(e) => setViewMode(e.target.value)}
+                  className="border border-gray-300 rounded px-2 py-1"
+                >
+                  <option value="individual">Individual Fermentations</option>
+                  <option value="aggregate">Aggregate (Min/Max/Avg)</option>
+                </select>
+              </div>
+              
+              {viewMode === 'individual' && (
+                <div className="flex items-center gap-2">
+                  <label htmlFor="filterMode" className="font-medium">Filter:</label>
+                  <select 
+                    id="filterMode" 
+                    value={filterMode} 
+                    onChange={(e) => {
+                      setFilterMode(e.target.value);
+                      setSelectedFermentations([]);
+                    }}
+                    className="border border-gray-300 rounded px-2 py-1"
+                  >
+                    <option value="all">All Fermentations</option>
+                    <option value="complete">Complete (108+ hours)</option>
+                    <option value="incomplete">Incomplete (&lt;108 hours)</option>
+                  </select>
+                </div>
+              )}
+              
+              <button 
+                onClick={() => setShowStats(!showStats)}
+                className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                {showStats ? 'Hide Stats' : 'Show Stats'}
+              </button>
+            </div>
+          </div>
+          
+          {/* Search and filter for fermentations */}
+          {viewMode === 'individual' && (
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <label htmlFor="searchTerm" className="font-medium">Search Fermentation #:</label>
+                <input
+                  id="searchTerm"
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="e.g., 01"
+                  className="border border-gray-300 rounded px-2 py-1"
+                />
+              </div>
+            </div>
+          )}
+          
+          {/* Fermentation selection (for individual view) */}
+          {viewMode === 'individual' && (
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-4">
+                <h3 className="font-semibold">Select Fermentations ({selectedFermentations.length}/{filteredFermentations.length}):</h3>
+                <div className="flex gap-2">
+                  <button 
+                    onClick={selectAllFermentations}
+                    className="px-2 py-1 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 text-sm"
+                  >
+                    Select All
+                  </button>
+                  <button 
+                    onClick={clearSelectedFermentations}
+                    className="px-2 py-1 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 text-sm"
+                  >
+                    Clear All
+                  </button>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-2 border border-gray-200 rounded">
+                {filteredFermentations.map((fermNumber, index) => {
+                  const fermData = data.attenuationData.find(f => f.fermNumber === fermNumber);
+                  return (
+                    <button
+                      key={fermNumber}
+                      className={`px-3 py-1 rounded text-sm flex items-center gap-1 ${
+                        selectedFermentations.includes(fermNumber)
+                          ? fermData?.isMolasses
+                            ? 'bg-red-500 text-white'
+                            : 'bg-blue-500 text-white'
+                          : fermData?.isMolasses
+                            ? 'bg-red-100 text-red-800 hover:bg-red-200'
+                            : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                      }`}
+                      onClick={() => toggleFermentation(fermNumber)}
+                      style={{ 
+                        borderLeft: selectedFermentations.includes(fermNumber)
+                          ? fermData?.isMolasses
+                            ? '4px solid #FF0000'
+                            : `4px solid ${colors[index % colors.length]}`
+                          : '4px solid transparent',
+                        fontWeight: fermData?.isMolasses ? 'bold' : 'normal'
+                      }}
+                      title={`Start: ${formatGravity(fermData?.startGravity)}, End: ${formatGravity(fermData?.endGravity)}, Attenuation: ${formatAttenuation(fermData?.attenuation)}${fermData?.hasProjections ? ' (projected)' : ''}`}
+                    >
+                      <span>{fermData?.isMolasses ? fermNumber : `#${fermNumber}`}</span>
+                      <span className="text-xs opacity-75">({fermData?.readings} pts)</span>
+                      {fermData?.hasProjections && (
+                        <span className="text-xs ml-1">+proj</span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+          
+          {/* Main chart */}
+          <div className="h-96 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis 
+                  dataKey="hour" 
+                  type="number" 
+                  domain={[0, 'dataMax']}
+                  allowDecimals={false}
+                  label={{ value: 'Hours Since Yeast Added', position: 'insideBottom', offset: -5 }}
+                />
+                <YAxis 
+                  domain={[Math.min(1.01, data.statistics.minGravity - 0.005), Math.max(1.08, data.statistics.maxGravity + 0.005)]} 
+                  label={{ value: 'Specific Gravity', angle: -90, position: 'insideLeft' }}
+                  tickFormatter={(value) => value.toFixed(3)}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Legend />
+                
+                {/* Render individual fermentation lines */}
+                {viewMode === 'individual' && filteredFermentations
+                  .filter(fermNumber => selectedFermentations.includes(fermNumber))
+                  .map((fermNumber, index) => {
+                    const fermData = data.attenuationData.find(f => f.fermNumber === fermNumber);
+                    const isMolasses = fermData?.isMolasses;
+                    
+                    // For molasses fermentation, separate actual and projected data
+                    if (isMolasses) {
+                      const actualData = data.dataByFerm[fermNumber].filter(d => !d.projected);
+                      const allData = data.dataByFerm[fermNumber];
+                      
+                      return (
+                        <React.Fragment key={fermNumber}>
+                          {/* Actual molasses data with thick line */}
+                          <Line
+                            data={actualData}
+                            type="monotone"
+                            dataKey="gravity"
+                            name={`${fermNumber} (Actual)`}
+                            stroke="#FF0000"
+                            strokeWidth={3}
+                            activeDot={{ r: 8 }}
+                            connectNulls
+                          />
+                          {/* Projected molasses data with dashed line */}
+                          <Line
+                            data={allData}
+                            type="monotone"
+                            dataKey="gravity"
+                            name={`${fermNumber} (Projected)`}
+                            stroke="#FF0000"
+                            strokeWidth={3}
+                            strokeDasharray="5 5"
+                            activeDot={{ r: 6 }}
+                            connectNulls
+                            dot={(props) => {
+                              const { cx, cy, payload } = props;
+                              return payload.projected ? (
+                                <circle cx={cx} cy={cy} r={3} fill="#FF0000" />
+                              ) : null;
+                            }}
+                          />
+                        </React.Fragment>
+                      );
+                    }
+                    
+                    // Regular fermentation lines
+                    return (
+                      <Line
+                        key={fermNumber}
+                        data={data.dataByFerm[fermNumber]}
+                        type="monotone"
+                        dataKey="gravity"
+                        name={fermNumber}
+                        stroke={colors[filteredFermentations.indexOf(fermNumber) % colors.length]}
+                        activeDot={{ r: 8 }}
+                        connectNulls
+                      />
+                    );
+                  })}
+                
+                {/* Render aggregate lines */}
+                {viewMode === 'aggregate' && (
+                  <>
+                    <Line
+                      data={data.aggregateData}
+                      type="monotone"
+                      dataKey="avg"
+                      name="Average"
+                      stroke="#2ca02c"
+                      strokeWidth={2}
+                      dot={{ r: 4 }}
+                      activeDot={{ r: 8 }}
+                    />
+                    <Line
+                      data={data.aggregateData}
+                      type="monotone"
+                      dataKey="min"
+                      name="Minimum"
+                      stroke="#d62728"
+                      strokeWidth={2}
+                      dot={{ r: 4 }}
+                      connectNulls
+                    />
+                    <Line
+                      data={data.aggregateData}
+                      type="monotone"
+                      dataKey="max"
+                      name="Maximum"
+                      stroke="#1f77b4"
+                      strokeWidth={2}
+                      dot={{ r: 4 }}
+                      connectNulls
+                    />
+                  </>
+                )}
+                
+                {/* Reference line at gravity 1.01 (close to final gravity) */}
+                <ReferenceLine y={1.01} stroke="gray" strokeDasharray="3 3" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          
+          {/* Statistics table */}
+          {showStats && (
+            <div className="mt-4">
+              <h3 className="font-semibold mb-2">Fermentation Statistics</h3>
+              <div className="overflow-x-auto">
+                <table className="min-w-full border-collapse border border-gray-300">
+                  <thead>
+                    <tr className="bg-gray-100">
+                      <th className="border border-gray-300 px-4 py-2 text-left">Ferm #</th>
+                      <th className="border border-gray-300 px-4 py-2 text-left">Start Gravity</th>
+                      <th className="border border-gray-300 px-4 py-2 text-left">Final Gravity</th>
+                      <th className="border border-gray-300 px-4 py-2 text-left">Final Hour</th>
+                      <th className="border border-gray-300 px-4 py-2 text-left">Attenuation %</th>
+                      <th className="border border-gray-300 px-4 py-2 text-left">Data Points</th>
+                      <th className="border border-gray-300 px-4 py-2 text-left">Type</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.attenuationData
+                      .sort((a, b) => a.fermNumber.localeCompare(b.fermNumber))
+                      .map(ferm => (
+                        <tr key={ferm.fermNumber} className={
+                          selectedFermentations.includes(ferm.fermNumber) 
+                            ? ferm.isMolasses 
+                              ? "bg-red-50 hover:bg-red-100"
+                              : "bg-blue-50 hover:bg-blue-100" 
+                            : "hover:bg-gray-50"
+                        }>
+                          <td className="border border-gray-300 px-4 py-2 font-medium">
+                            {ferm.isMolasses ? (
+                              <span className="flex items-center">
+                                <span className="inline-block w-3 h-3 bg-red-500 rounded-full mr-2"></span>
+                                {ferm.fermNumber}
+                              </span>
+                            ) : ferm.fermNumber}
+                          </td>
+                          <td className="border border-gray-300 px-4 py-2">{formatGravity(ferm.startGravity)}</td>
+                          <td className="border border-gray-300 px-4 py-2">
+                            {ferm.hasProjections ? (
+                              <span>
+                                {formatGravity(ferm.realEndGravity)} 
+                                <span className="text-gray-500 ml-1">
+                                  ({formatGravity(ferm.endGravity)} proj.)
+                                </span>
+                              </span>
+                            ) : (
+                              formatGravity(ferm.endGravity)
+                            )}
+                          </td>
+                          <td className="border border-gray-300 px-4 py-2">
+                            {ferm.hasProjections ? (
+                              <span>
+                                {ferm.realMaxHour} 
+                                <span className="text-gray-500 ml-1">
+                                  ({ferm.maxHour} proj.)
+                                </span>
+                              </span>
+                            ) : (
+                              ferm.maxHour
+                            )}
+                          </td>
+                          <td className="border border-gray-300 px-4 py-2">
+                            {formatAttenuation(ferm.attenuation)}
+                            {ferm.hasProjections && (
+                              <span className="text-gray-500 ml-1">(projected)</span>
+                            )}
+                          </td>
+                          <td className="border border-gray-300 px-4 py-2">{ferm.readings}</td>
+                          <td className="border border-gray-300 px-4 py-2">
+                            {ferm.isMolasses ? (
+                              <span className="font-bold text-red-600">Molasses</span>
+                            ) : (
+                              <span className="text-gray-600">Regular</span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+          
+          <footer className="mt-8 text-center text-gray-500 text-sm">
+            <p>Fermentation Tracking Dashboard</p>
+            <p>Created: April 2025</p>
+          </footer>
+        </div>
+      );
+    }
+
+    // Render the app
+    ReactDOM.render(
+      <FermentationChart />,
+      document.getElementById('app')
+    );
+  </script>
+</body>
+</html>
