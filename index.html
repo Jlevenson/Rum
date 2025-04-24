@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jake's Data Visualization & AI Projects</title>
     <style>
+        /* Keeping the original styles */
         :root {
             --primary-color: #2c3e50;
             --secondary-color: #3498db;
@@ -188,7 +189,7 @@
                 <div class="card-content">
                     <h3>Rum Cost vs. Price Gap</h3>
                     <p>This visualization breaks down our production costs compared to retail and wholesale prices, showing the economic challenges of craft rum production.</p>
-                    <a href="Rum/rum-cost-vs-price-gap.html" class="btn">View Visualization</a>
+                    <a href="rum-cost-vs-price-gap.html" class="btn">View Visualization</a>
                 </div>
             </div>
             
@@ -200,7 +201,7 @@
                 <div class="card-content">
                     <h3>Rosalie Bay Rum Visualization</h3>
                     <p>Interactive data visualization showcasing our rum production process and metrics over time.</p>
-                    <a href="Rum/rosalie-bay-visualization-html.html" class="btn">View Visualization</a>
+                    <a href="rosalie-bay-visualization-html.html" class="btn">View Visualization</a>
                 </div>
             </div>
             
@@ -212,7 +213,7 @@
                 <div class="card-content">
                     <h3>Distillery Analytics Dashboard</h3>
                     <p>Comprehensive dashboard tracking production metrics, fermentation data, and spirit run analysis for the distillery.</p>
-                    <a href="Rum/distillery-dashboard.html" class="btn">View Dashboard</a>
+                    <a href="distillery-dashboard.html" class="btn">View Dashboard</a>
                 </div>
             </div>
         </div>
@@ -233,7 +234,7 @@
                 <div class="card-content">
                     <h3>Farmer Payment Distribution</h3>
                     <p>Review the distribution of payments to our local sugarcane farmers across different communities in Dominica.</p>
-                    <a href="Rum/farmer-payments.html" class="btn" id="farmer-link">View Farmer Data</a>
+                    <a href="farmer-payments.html" class="btn" id="farmer-link">View Farmer Data</a>
                 </div>
             </div>
             
@@ -245,7 +246,7 @@
                 <div class="card-content">
                     <h3>Distillery Production Schedule</h3>
                     <p>Visual overview of our distillery's production schedule, including fermentation and distillation activities.</p>
-                    <a href="Rum/rosalie-bay-distillery-schedule.html" class="btn">View Schedule</a>
+                    <a href="rosalie-bay-distillery-schedule.html" class="btn">View Schedule</a>
                 </div>
             </div>
             
@@ -257,7 +258,7 @@
                 <div class="card-content">
                     <h3>Sugarcane Supply Analysis</h3>
                     <p>Visualization of our sugarcane supply chain, including volume by village and distribution patterns.</p>
-                    <a href="Rum/farmer-cane-supply.html" class="btn">View Supply Data</a>
+                    <a href="farmer-cane-supply.html" class="btn">View Supply Data</a>
                 </div>
             </div>
         </div>
@@ -278,7 +279,7 @@
                 <div class="card-content">
                     <h3>Leatherback Dashboard</h3>
                     <p>Interactive visualization of leatherback sea turtle nesting patterns, hatching rates, and conservation metrics over time.</p>
-                    <a href="Rum/leatherback-dashboard-html.html" class="btn">View Dashboard</a>
+                    <a href="leatherback-dashboard-html.html" class="btn">View Dashboard</a>
                 </div>
             </div>
         </div>
@@ -287,33 +288,5 @@
     <footer>
         <p>© 2025 Jake's Data Visualization Projects</p>
     </footer>
-
-    <script>
-        // Debug script to verify links are working
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Page loaded successfully');
-            
-            // Check specific farmer data link
-            const farmerLink = document.getElementById('farmer-link');
-            if (farmerLink) {
-                console.log('Farmer link found: ' + farmerLink.href);
-                
-                // Add special click handler for debugging
-                farmerLink.addEventListener('click', function(e) {
-                    console.log('Farmer link clicked!');
-                    // Don't prevent default behavior, let the link work normally
-                });
-            } else {
-                console.error('Farmer link not found!');
-            }
-            
-            // List all links for verification
-            const allLinks = document.querySelectorAll('a.btn');
-            console.log('Found ' + allLinks.length + ' total links:');
-            allLinks.forEach((link, index) => {
-                console.log((index + 1) + '. ' + link.textContent + ' → ' + link.href);
-            });
-        });
-    </script>
 </body>
 </html>
