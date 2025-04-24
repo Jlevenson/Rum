@@ -165,6 +165,12 @@
         .category-agriculture {
             background-color: #8e44ad;
         }
+
+        .btn-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
     </style>
 </head>
 <body>
@@ -215,6 +221,18 @@
                     <a href="distillery-dashboard.html" class="btn">View Dashboard</a>
                 </div>
             </div>
+            
+            <div class="project-card">
+                <div class="card-header">
+                    <span class="category-badge category-business">Fermentation</span>
+                    Fermentation Analysis
+                </div>
+                <div class="card-content">
+                    <h3>Fermentation Process Tracking</h3>
+                    <p>Detailed charts tracking the fermentation process with temperature, pH, and other critical metrics.</p>
+                    <a href="fermentation-chart-standalone.html" class="btn">View Fermentation Data</a>
+                </div>
+            </div>
         </div>
     </section>
     
@@ -233,7 +251,23 @@
                 <div class="card-content">
                     <h3>Farmer Payment Distribution</h3>
                     <p>Review the distribution of payments to our local sugarcane farmers across different communities in Dominica.</p>
-                    <a href="farmer-payments.html" class="btn" id="farmer-link">View Farmer Data</a>
+                    <div class="btn-container">
+                        <a href="farmer-payments.html" class="btn" id="farmer-link">View Basic Data</a>
+                        <a href="farmer-payments-detail.html" class="btn">View Detailed Data</a>
+                        <a href="farmer-visualization-html.html" class="btn">View Interactive Chart</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="project-card">
+                <div class="card-header">
+                    <span class="category-badge category-agriculture">Village Analysis</span>
+                    Village Payment Analysis
+                </div>
+                <div class="card-content">
+                    <h3>Farmer Payments by Village</h3>
+                    <p>Analysis of payments organized by village showing regional distribution patterns across Dominica.</p>
+                    <a href="rosalie-bay-visualization-html.html" class="btn">View Village Analysis</a>
                 </div>
             </div>
             
